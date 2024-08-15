@@ -55,7 +55,7 @@ class AuthWrapper extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           final User? user = snapshot.data;
-          return user == null ? LoginScreen() : HomeScreen();
+          return user == null ? SignInScreen() : HomeScreen();
         }
         return CircularProgressIndicator();
       },

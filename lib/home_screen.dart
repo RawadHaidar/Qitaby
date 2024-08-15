@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qitaby_web/auth_service.dart';
+import 'package:qitaby_web/book_details_screen.dart';
 import 'book_service.dart';
 import 'book.dart';
 import 'add_book_screen.dart';
@@ -133,31 +134,54 @@ class _HomeScreenState extends State<HomeScreen> {
               itemCount: _books.length,
               itemBuilder: (context, index) {
                 final book = _books[index];
-                return ListTile(
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(book.name),
-                      const Text('  '),
-                      Text(book.status),
-                    ],
+                return Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
                   ),
-                  subtitle: Text(book.schoolName),
-                  trailing: Text('\$${book.price.toString()}'),
+                  elevation: 4.0,
+                  margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  child: InkWell(
+                    onTap: () {
+                      // Navigate to the BookDetailsScreen and pass the selected book
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BookDetailsScreen(book: book),
+                        ),
+                      );
+                    },
+                    child: ListTile(
+                      tileColor: Colors.blue[300],
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(book.name),
+                          const Text('  '),
+                          Text(book.status),
+                        ],
+                      ),
+                      subtitle: Text(book.schoolName),
+                      trailing: Text('\$${book.price.toString()}'),
+                    ),
+                  ),
                 );
               },
             ),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AddBookScreen()),
-          );
-        },
-        child: Icon(Icons.add),
+      floatingActionButton: Container(
+        width: 100.0, // Set the desired width
+        height: 80.0, // Set the desired height
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AddBookScreen()),
+            );
+          },
+          child: const Text('Sell a book!'),
+        ),
       ),
     );
   }
