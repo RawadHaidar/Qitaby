@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "166154266280",
+    "project_id": "qitaby-ad7ac",
+    "storage_bucket": "qitaby-ad7ac.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:166154266280:android:af43bd027b0c07a343449d",
+        "android_client_info": {
+          "package_name": "Qitaby.com_0"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFuu8JaJ_W_JOBE1eCBk1VhPalb0wO70U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
