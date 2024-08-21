@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +9,24 @@ class AuthService with ChangeNotifier {
 
   Stream<User?> get user {
     return _auth.authStateChanges();
+  }
+
+  Future<Map<String, dynamic>?> getUserData() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser != null) {
+      String uid = currentUser.uid;
+
+      DocumentSnapshot userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+      if (userDoc.exists) {
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+        return userData;
+      }
+    }
+
+    return null;
   }
 
   Future<void> signInWithEmailAndPassword(String email, String password) async {

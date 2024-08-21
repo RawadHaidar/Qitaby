@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qitaby_web/auth_service.dart';
 import 'package:qitaby_web/book_details_screen.dart';
+import 'package:qitaby_web/profile_screen.dart';
 import 'book_service.dart';
 import 'book.dart';
 import 'add_book_screen.dart';
@@ -18,11 +19,12 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> schoolNames = [];
   String? selectedGrade;
   List<String> schoolGrades = [];
+  // String _username = '';
 
   @override
   void initState() {
     super.initState();
-    _loadBooks();
+    // _loadBooks();
     BookService().fetchSchoolNames().then((names) {
       setState(() {
         schoolNames = names;
@@ -37,28 +39,93 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<void> _loadBooks() async {
-    final books =
-        await Provider.of<BookService>(context, listen: false).getBooks();
+  // Future<void> _loadBooks() async {
+  //   final books =
+  //       await Provider.of<BookService>(context, listen: false).getBooks();
+  //   setState(() {
+  //     _books = books;
+  //   });
+  // }
+
+  Future<void> _searchBooks(
+      String schoolquery, String bookquery, String gradequery) async {
+    final books = await Provider.of<BookService>(context, listen: false)
+        .searchBooks(schoolquery, bookquery, gradequery);
     setState(() {
       _books = books;
     });
   }
 
-  Future<void> _searchBooks(String schoolquery, String bookquery) async {
-    final books = await Provider.of<BookService>(context, listen: false)
-        .searchBooks(schoolquery, bookquery);
-    setState(() {
-      _books = books;
-    });
-  }
+//   Future<String> _fetchUsername() async {
+// // Create an instance of AuthService
+//     AuthService authService = AuthService();
+//     String? username = await authService.getUsername();
+
+//     setState(() {
+//       _username = username ?? ''; // Use an empty string if username is null
+//     });
+
+//     return _username;
+//   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Book Shop'),
+        toolbarHeight: 150,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                Image.asset(
+                  'assets/logo/logo.jpeg',
+                  // width: 50,
+                  height: 100,
+                ),
+                Text('Book Shop'),
+              ],
+            ),
+            Consumer<AuthService>(
+              builder: (context, authService, child) {
+                return FutureBuilder<Map<String, dynamic>?>(
+                  future: authService.getUserData(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (snapshot.hasData) {
+                      Map<String, dynamic>? userData = snapshot.data;
+                      if (userData != null) {
+                        String username =
+                            userData['username'] ?? 'No username found';
+                        return Center(child: Text('Welcome, $username!'));
+                      } else {
+                        return Center(child: Text('No username found'));
+                      }
+                    } else {
+                      return Center(child: Text('Something went wrong'));
+                    }
+                  },
+                );
+              },
+            ),
+          ],
+        ),
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      ProfileScreen(), // Replace with your ProfileScreen
+                ),
+              );
+            },
+            icon: Icon(Icons.person),
+          ),
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () async {
@@ -79,7 +146,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: Icon(Icons.search),
                   onPressed: () {
                     _searchBooks(
-                        _searchController.text, selectedSchoolName.toString());
+                        _searchController.text,
+                        selectedSchoolName.toString(),
+                        selectedGrade.toString());
+                    print('searching for books ' +
+                        _searchController.text +
+                        '...' +
+                        selectedSchoolName.toString());
                   },
                 ),
               ),
@@ -152,13 +225,23 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     child: ListTile(
                       tileColor: Colors.blue[300],
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(book.name),
-                          const Text('  '),
-                          Text(book.status),
-                        ],
+                      // leading: Icon(
+                      //   book.status == 'Available'
+                      //       ? Icons.check_circle
+                      //       : Icons.remove_circle,
+                      //   color: book.status == 'Available'
+                      //       ? Colors.green
+                      //       : Colors.red,
+                      // ),
+                      title: Padding(
+                        padding: const EdgeInsets.only(bottom: 4.0),
+                        child: Text(
+                          book.name,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0,
+                          ),
+                        ),
                       ),
                       subtitle: Text(book.schoolName),
                       trailing: Text('\$${book.price.toString()}'),
@@ -167,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
-          ),
+          )
         ],
       ),
       floatingActionButton: Container(

@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'book.dart';
 import 'book_service.dart';
+import 'auth_service.dart';
 
 class AddBookScreen extends StatefulWidget {
   @override
@@ -19,15 +22,41 @@ class _AddBookScreenState extends State<AddBookScreen> {
   List<String> schoolNames = [];
   String? errorMessage;
 
+  // Declare the variables to hold the user data
+  String? username;
+  String? userNumber;
+  String? userAddress;
+
   @override
   void initState() {
     super.initState();
     BookService().fetchSchoolNames().then((names) {
       setState(() {
         schoolNames = names;
-        print('State updated with school names: $schoolNames');
       });
     });
+
+    _fetchUserData(); // Fetch user data on initialization
+  }
+
+  Future<void> _fetchUserData() async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final user = authService.currentUser;
+
+    if (user != null) {
+      final userData = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (userData.exists) {
+        setState(() {
+          username = userData['username'];
+          userNumber = userData['phone_number'];
+          userAddress = userData['address'];
+        });
+      }
+    }
   }
 
   void _addBook() async {
@@ -48,14 +77,15 @@ class _AddBookScreenState extends State<AddBookScreen> {
       name: _nameController.text,
       schoolName: selectedSchoolName!,
       grade: _gradeController.text,
-      userAddress: _addressController.text,
+      userAddress: userAddress ?? _addressController.text,
       price: double.parse(_priceController.text),
       status: selectedStatus!,
+      username: username ?? 'Anonymous', // Use fetched or fallback value
+      usernumber: userNumber ?? 'Unknown', // Use fetched or fallback value
     );
 
     try {
       await Provider.of<BookService>(context, listen: false).addBook(book);
-      print('Book added successfully');
       setState(() {
         errorMessage = null;
       });
@@ -69,6 +99,13 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+
+    // String? user = authService.currentUser?.phoneNumber;
+    String? email = authService.currentUser?.email;
+    String phonenumber =
+        (email != null && email.length >= 13) ? email.substring(0, 12) : '';
+
     return Scaffold(
       appBar: AppBar(title: Text('Add Book')),
       body: Padding(
@@ -98,8 +135,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
               onChanged: (String? newValue) {
                 setState(() {
                   selectedSchoolName = newValue;
-                  errorMessage =
-                      null; // Clear error message when selection is made
                 });
               },
               items: schoolNames.isNotEmpty
@@ -109,7 +144,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                         child: Text(value),
                       );
                     }).toList()
-                  : null, // Show an empty dropdown when no items are available
+                  : null,
             ),
             DropdownButton<String>(
               value: selectedStatus,
@@ -117,8 +152,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
               onChanged: (String? newValue) {
                 setState(() {
                   selectedStatus = newValue;
-                  errorMessage =
-                      null; // Clear error message when selection is made
                 });
               },
               items: ['Excellent', 'Good', 'Bad']
@@ -132,7 +165,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
             SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: _addBook,
-              child: Text('Add Book'),
+              child: Text('Adding Book by $phonenumber'),
             ),
             if (errorMessage != null) ...[
               SizedBox(height: 10.0),

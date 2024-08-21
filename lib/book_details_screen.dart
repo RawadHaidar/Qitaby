@@ -42,6 +42,16 @@ class BookDetailsScreen extends StatelessWidget {
               'Price: \$${book.price.toString()}',
               style: TextStyle(fontSize: 18.0),
             ),
+            SizedBox(height: 8.0),
+            Text(
+              'Owner: ${book.username.toString()}',
+              style: TextStyle(fontSize: 18.0),
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              'Phone Number: ${book.usernumber.toString()}',
+              style: TextStyle(fontSize: 18.0),
+            ),
             Spacer(),
             ElevatedButton(
               onPressed: () {

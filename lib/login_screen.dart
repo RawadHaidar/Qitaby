@@ -13,11 +13,13 @@ class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  String errormessage = '';
+
   void _signIn() async {
     try {
       // Sign in the user
       await _auth.signInWithEmailAndPassword(
-        email: _phoneNumberController.text + "@example.com",
+        email: "+961${_phoneNumberController.text}@example.com",
         password: _passwordController.text,
       );
 
@@ -25,6 +27,11 @@ class _SignInScreenState extends State<SignInScreen> {
     } catch (e) {
       print('Error: $e');
       // Show error message to user
+      setState(() {
+        errormessage = e
+            .toString()
+            .replaceFirst('[firebase_auth/invalid-credential] ', '');
+      });
     }
   }
 
@@ -39,29 +46,34 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Sign In')),
+      appBar: AppBar(title: const Text('Sign In')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
               controller: _phoneNumberController,
-              decoration: InputDecoration(labelText: 'Phone Number'),
+              decoration: const InputDecoration(labelText: 'Phone Number'),
             ),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
+              decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
+            ),
+            const SizedBox(
+              height: 10,
             ),
             ElevatedButton(
               onPressed: _signIn,
-              child: Text('Sign In'),
+              child: const Text('Sign In'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextButton(
               onPressed: _navigateToSignUp,
-              child: Text('Don\'t have an account? Sign Up'),
+              child: const Text('Don\'t have an account? Sign Up'),
             ),
+            const SizedBox(height: 20),
+            Text(style: TextStyle(color: Colors.red), "$errormessage"),
           ],
         ),
       ),

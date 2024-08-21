@@ -6,6 +6,8 @@ class Book {
   String userAddress;
   double? price;
   String status;
+  String username;
+  String usernumber;
 
   Book({
     required this.id,
@@ -13,8 +15,10 @@ class Book {
     required this.schoolName,
     required this.grade,
     required this.userAddress,
-    required this.price,
+    this.price, // Nullable field
     required this.status,
+    required this.username,
+    required this.usernumber,
   });
 
   Map<String, dynamic> toMap() {
@@ -26,18 +30,22 @@ class Book {
       'userAddress': userAddress,
       'price': price,
       'status': status.toLowerCase(),
+      'username': username,
+      'usernumber': usernumber,
     };
   }
 
   static Book fromMap(Map<String, dynamic> map) {
     return Book(
-      id: map['id'],
-      name: map['name'],
-      schoolName: map['schoolName'],
-      grade: map['grade'],
-      userAddress: map['userAddress'],
-      price: map['price'],
-      status: map['status'],
+      id: map['id'] as String? ?? 'Unknown ID',
+      name: map['name'] as String? ?? 'Unknown Name',
+      schoolName: map['schoolName'] as String? ?? 'Unknown School',
+      grade: map['grade'] as String? ?? 'Unknown Grade',
+      userAddress: map['userAddress'] as String? ?? 'Unknown Address',
+      price: (map['price'] as num?)?.toDouble(), // Handle nullable price
+      status: map['status'] as String? ?? 'Unknown Status',
+      username: map['username'] as String? ?? 'Unknown Username',
+      usernumber: map['usernumber'] as String? ?? 'Unknown Usernumber',
     );
   }
 }
