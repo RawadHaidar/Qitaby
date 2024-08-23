@@ -4,6 +4,7 @@ import 'package:qitaby_web/auth_service.dart';
 import 'package:qitaby_web/book.dart';
 import 'package:qitaby_web/book_details_screen.dart';
 import 'package:qitaby_web/book_service.dart';
+import 'package:qitaby_web/add_book_screen.dart'; // Import your AddBookScreen here
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -13,6 +14,48 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   List<Book> _books = [];
   String? phoneNumber;
+
+  void _deleteBook(int index) {
+    final bookId = _books[index].id;
+
+    Provider.of<BookService>(context, listen: false)
+        .deleteBook(bookId)
+        .then((_) {
+      setState(() {
+        _books.removeAt(index);
+      });
+    }).catchError((error) {
+      print("Failed to delete book: $error");
+    });
+  }
+
+  void _showDeleteConfirmationDialog(
+      BuildContext context, Book book, int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Delete Book"),
+          content: Text("Are you sure you want to delete '${book.name}'?"),
+          actions: [
+            TextButton(
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Dismiss the dialog
+              },
+            ),
+            TextButton(
+              child: Text("Delete"),
+              onPressed: () {
+                _deleteBook(index);
+                Navigator.of(context).pop(); // Dismiss the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Future<void> _searchBooks(String phoneNumberQuery) async {
     final books = await Provider.of<BookService>(context, listen: false)
@@ -58,14 +101,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: const TextStyle(fontSize: 20),
                     ),
                     // Add more user data fields as needed
-                    InkWell(
-                      child: Row(
-                        children: [
-                          Text('View my books'),
-                          Icon(Icons.arrow_drop_down),
-                        ],
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddBookScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text('Add a Book'),
                       ),
-                      onTap: () => _searchBooks(phoneNumber.toString()),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () => _searchBooks(phoneNumber.toString()),
+                        child: Text('View my books'),
+                      ),
                     ),
                     Expanded(
                       child: ListView.builder(
@@ -77,11 +132,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               borderRadius: BorderRadius.circular(12.0),
                             ),
                             elevation: 4.0,
-                            margin: const EdgeInsets.symmetric(
+                            margin: EdgeInsets.symmetric(
                                 vertical: 8.0, horizontal: 16.0),
                             child: InkWell(
                               onTap: () {
-                                // Navigate to the BookDetailsScreen and pass the selected book
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -92,7 +146,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               },
                               child: ListTile(
                                 tileColor: Colors.blue[300],
-                                // ... rest of the ListTile code (title, subtitle, trailing)
+                                title: Padding(
+                                  padding: const EdgeInsets.only(bottom: 4.0),
+                                  child: Text(
+                                    book.name,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16.0,
+                                    ),
+                                  ),
+                                ),
+                                subtitle: Text(book.schoolName),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      '\$${book.price.toString()}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12.0,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon:
+                                          Icon(Icons.delete, color: Colors.red),
+                                      onPressed: () {
+                                        _showDeleteConfirmationDialog(
+                                            context, book, index);
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:qitaby_web/aboutus.dart';
 import 'package:qitaby_web/auth_service.dart';
 import 'package:qitaby_web/book_details_screen.dart';
 import 'package:qitaby_web/profile_screen.dart';
@@ -19,33 +20,23 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> schoolNames = [];
   String? selectedGrade;
   List<String> schoolGrades = [];
-  // String _username = '';
 
   @override
   void initState() {
     super.initState();
-    // _loadBooks();
     BookService().fetchSchoolNames().then((names) {
       setState(() {
         schoolNames = names;
-        print('State updated with school names: $schoolNames'); // Debug print
+        print('State updated with school names: $schoolNames');
       });
     });
     BookService().fetchGrades().then((grades) {
       setState(() {
         schoolGrades = grades;
-        print('State updated with school grades: $schoolGrades'); // Debug print
+        print('State updated with school grades: $schoolGrades');
       });
     });
   }
-
-  // Future<void> _loadBooks() async {
-  //   final books =
-  //       await Provider.of<BookService>(context, listen: false).getBooks();
-  //   setState(() {
-  //     _books = books;
-  //   });
-  // }
 
   Future<void> _searchBooks(
       String schoolquery, String bookquery, String gradequery) async {
@@ -55,18 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
       _books = books;
     });
   }
-
-//   Future<String> _fetchUsername() async {
-// // Create an instance of AuthService
-//     AuthService authService = AuthService();
-//     String? username = await authService.getUsername();
-
-//     setState(() {
-//       _username = username ?? ''; // Use an empty string if username is null
-//     });
-
-//     return _username;
-//   }
 
   @override
   Widget build(BuildContext context) {
@@ -78,10 +57,18 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Column(
               children: [
-                Image.asset(
-                  'assets/logo/logo.jpeg',
-                  // width: 50,
-                  height: 100,
+                InkWell(
+                  onTap: () {
+                    // Navigate to the AboutUsPage when the logo is tapped
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AboutUsPage()),
+                    );
+                  },
+                  child: Image.asset(
+                    'assets/logo/logo.jpeg',
+                    height: 100,
+                  ),
                 ),
                 Text('Book Shop'),
               ],
@@ -114,27 +101,65 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      ProfileScreen(), // Replace with your ProfileScreen
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Row(
+                  children: [
+                    const Text('About Us'),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AboutUsPage(),
+                          ),
+                        );
+                      },
+                      icon: Icon(Icons.info_outline),
+                      iconSize: 25.0,
+                    ),
+                  ],
                 ),
-              );
-            },
-            icon: Icon(Icons.person),
-          ),
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () async {
-              await Provider.of<AuthService>(context, listen: false).signOut();
-            },
+                Row(
+                  children: [
+                    const Text('Profile'),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileScreen(),
+                          ),
+                        );
+                      },
+                      icon: Icon(Icons.person),
+                      iconSize: 25.0,
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text('Logout'),
+                    IconButton(
+                      icon: Icon(Icons.logout),
+                      onPressed: () async {
+                        await Provider.of<AuthService>(context, listen: false)
+                            .signOut();
+                      },
+                      iconSize: 25.0,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Padding(
             padding: EdgeInsets.all(8.0),
@@ -149,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         _searchController.text,
                         selectedSchoolName.toString(),
                         selectedGrade.toString());
-                    print('searching for books ' +
+                    print('Searching for books: ' +
                         _searchController.text +
                         '...' +
                         selectedSchoolName.toString());
@@ -158,49 +183,56 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              DropdownButton<String>(
-                value:
-                    selectedSchoolName, // Initial value should be null or match an item in the list
-                hint: Text('Select School Name'),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedSchoolName = newValue;
-                    // _searchBooks(selectedSchoolName.toString());
-                  });
-                },
-                items: schoolNames.isNotEmpty
-                    ? schoolNames.map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList()
-                    : null, // If you prefer to show an empty dropdown when no items are available
-              ),
-              DropdownButton<String>(
-                value:
-                    selectedGrade, // Initial value should be null or match an item in the list
-                hint: Text('Select Grade'),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedGrade = newValue;
-                    // _searchBooks(selectedSchoolName.toString());
-                  });
-                },
-                items: schoolGrades.isNotEmpty
-                    ? schoolGrades
-                        .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList()
-                    : null, // If you prefer to show an empty dropdown when no items are available
-              ),
-            ],
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Autocomplete<String>(
+              optionsBuilder: (TextEditingValue textEditingValue) {
+                if (textEditingValue.text.isEmpty) {
+                  return const Iterable<String>.empty();
+                }
+                return schoolNames.where((String option) {
+                  return option
+                      .toLowerCase()
+                      .contains(textEditingValue.text.toLowerCase());
+                });
+              },
+              onSelected: (String selection) {
+                setState(() {
+                  selectedSchoolName = selection;
+                });
+              },
+              fieldViewBuilder: (context, textEditingController, focusNode,
+                  onFieldSubmitted) {
+                return TextField(
+                  controller: textEditingController,
+                  focusNode: focusNode,
+                  decoration: InputDecoration(
+                    labelText: 'Select School Name',
+                  ),
+                );
+              },
+              displayStringForOption: (String option) => option,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: DropdownButton<String>(
+              value: selectedGrade,
+              hint: Text('Select Grade'),
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedGrade = newValue;
+                });
+              },
+              items: schoolGrades.isNotEmpty
+                  ? schoolGrades.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList()
+                  : null,
+            ),
           ),
           Expanded(
             child: ListView.builder(
@@ -215,7 +247,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                   child: InkWell(
                     onTap: () {
-                      // Navigate to the BookDetailsScreen and pass the selected book
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -224,15 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                     child: ListTile(
-                      tileColor: Colors.blue[300],
-                      // leading: Icon(
-                      //   book.status == 'Available'
-                      //       ? Icons.check_circle
-                      //       : Icons.remove_circle,
-                      //   color: book.status == 'Available'
-                      //       ? Colors.green
-                      //       : Colors.red,
-                      // ),
+                      tileColor: Colors.blue[250],
                       title: Padding(
                         padding: const EdgeInsets.only(bottom: 4.0),
                         child: Text(
@@ -254,8 +277,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       floatingActionButton: Container(
-        width: 100.0, // Set the desired width
-        height: 80.0, // Set the desired height
+        width: 100.0,
+        height: 80.0,
         child: FloatingActionButton(
           onPressed: () {
             Navigator.push(

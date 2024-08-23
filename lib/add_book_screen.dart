@@ -129,22 +129,36 @@ class _AddBookScreenState extends State<AddBookScreen> {
               decoration: InputDecoration(labelText: 'Price'),
               keyboardType: TextInputType.number,
             ),
-            DropdownButton<String>(
-              value: selectedSchoolName,
-              hint: Text('Select School Name'),
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedSchoolName = newValue;
-                });
-              },
-              items: schoolNames.isNotEmpty
-                  ? schoolNames.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList()
-                  : null,
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Autocomplete<String>(
+                optionsBuilder: (TextEditingValue textEditingValue) {
+                  if (textEditingValue.text.isEmpty) {
+                    return const Iterable<String>.empty();
+                  }
+                  return schoolNames.where((String option) {
+                    return option
+                        .toLowerCase()
+                        .contains(textEditingValue.text.toLowerCase());
+                  });
+                },
+                onSelected: (String selection) {
+                  setState(() {
+                    selectedSchoolName = selection;
+                  });
+                },
+                fieldViewBuilder: (context, textEditingController, focusNode,
+                    onFieldSubmitted) {
+                  return TextField(
+                    controller: textEditingController,
+                    focusNode: focusNode,
+                    decoration: InputDecoration(
+                      labelText: 'Select School Name',
+                    ),
+                  );
+                },
+                displayStringForOption: (String option) => option,
+              ),
             ),
             DropdownButton<String>(
               value: selectedStatus,

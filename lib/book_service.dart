@@ -17,15 +17,18 @@ class BookService {
     }
   }
 
-  // Future<void> addBook(Book book) async {
-  //   try {
-  //     await bookCollection.add(book).then((DocumentReference doc) =>
-  //         print('DocumentSnapshot added with ID: ${doc.id}'));
-  //     ;
-  //   } catch (e) {
-  //     print('Error adding book: $e');
-  //   }
-  // }
+  Future<void> deleteBook(String bookId) async {
+    try {
+      final docRef = bookCollection.doc(bookId);
+      await docRef.delete();
+      print("Book with ID '$bookId' deleted successfully!");
+    } on FirebaseException catch (e) {
+      print("Error deleting book: ${e.message}");
+      // Handle potential errors (e.g., network issues, non-existent document)
+    } catch (e) {
+      print("Unexpected error: $e");
+    }
+  }
 
   Future<List<Book>> getBooks() async {
     final QuerySnapshot snapshot = await bookCollection.get();
