@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
                 BookService()), // Use Provider here instead of ChangeNotifierProvider
       ],
       child: MaterialApp(
-        title: 'Book Shop',
+        title: 'Qitaby Book Shop',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),

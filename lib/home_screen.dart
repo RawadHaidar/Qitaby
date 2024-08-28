@@ -27,13 +27,13 @@ class _HomeScreenState extends State<HomeScreen> {
     BookService().fetchSchoolNames().then((names) {
       setState(() {
         schoolNames = names;
-        print('State updated with school names: $schoolNames');
+        // print('State updated with school names: $schoolNames');
       });
     });
     BookService().fetchGrades().then((grades) {
       setState(() {
         schoolGrades = grades;
-        print('State updated with school grades: $schoolGrades');
+        // print('State updated with school grades: $schoolGrades');
       });
     });
   }
@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 100,
                   ),
                 ),
-                Text('Book Shop'),
+                const Text('Book Shop'),
               ],
             ),
             Consumer<AuthService>(
@@ -79,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   future: authService.getUserData(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (snapshot.hasData) {
@@ -89,10 +89,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             userData['username'] ?? 'No username found';
                         return Center(child: Text('Welcome, $username!'));
                       } else {
-                        return Center(child: Text('No username found'));
+                        return const Center(child: Text('No username found'));
                       }
                     } else {
-                      return Center(child: Text('Something went wrong'));
+                      return const Center(child: Text('Something went wrong'));
                     }
                   },
                 );
@@ -118,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                       },
-                      icon: Icon(Icons.info_outline),
+                      icon: const Icon(Icons.info_outline),
                       iconSize: 25.0,
                     ),
                   ],
@@ -135,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                       },
-                      icon: Icon(Icons.person),
+                      icon: const Icon(Icons.person),
                       iconSize: 25.0,
                     ),
                   ],
@@ -144,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     const Text('Logout'),
                     IconButton(
-                      icon: Icon(Icons.logout),
+                      icon: const Icon(Icons.logout),
                       onPressed: () async {
                         await Provider.of<AuthService>(context, listen: false)
                             .signOut();
@@ -162,32 +162,35 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                labelText: 'Search by book name, school name, or grade',
+                labelText: 'Search by book name',
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.search),
+                  icon: const Icon(Icons.search),
                   onPressed: () {
                     _searchBooks(
                         _searchController.text,
                         selectedSchoolName.toString(),
                         selectedGrade.toString());
-                    print('Searching for books: ' +
-                        _searchController.text +
-                        '...' +
-                        selectedSchoolName.toString());
+                    // print('Searching for books: \n' +
+                    //     _searchController.text +
+                    //     '\n' +
+                    //     selectedSchoolName.toString() +
+                    //     '\n' +
+                    //     selectedGrade.toString());
                   },
                 ),
               ),
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Autocomplete<String>(
               optionsBuilder: (TextEditingValue textEditingValue) {
                 if (textEditingValue.text.isEmpty) {
+                  selectedSchoolName = null;
                   return const Iterable<String>.empty();
                 }
                 return schoolNames.where((String option) {
@@ -206,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return TextField(
                   controller: textEditingController,
                   focusNode: focusNode,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Select School Name',
                   ),
                 );
@@ -215,23 +218,28 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: DropdownButton<String>(
               value: selectedGrade,
-              hint: Text('Select Grade'),
+              hint: const Text('Select Grade'),
               onChanged: (String? newValue) {
                 setState(() {
                   selectedGrade = newValue;
                 });
               },
-              items: schoolGrades.isNotEmpty
-                  ? schoolGrades.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList()
-                  : null,
+              items: [
+                const DropdownMenuItem<String>(
+                  value: null,
+                  child: Text('None'), // Display text for null value
+                ),
+                ...List.generate(12, (index) {
+                  String grade = (index + 1).toString();
+                  return DropdownMenuItem<String>(
+                    value: grade,
+                    child: Text(grade),
+                  );
+                })
+              ],
             ),
           ),
           Expanded(
@@ -244,7 +252,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius: BorderRadius.circular(12.0),
                   ),
                   elevation: 4.0,
-                  margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 16.0),
                   child: InkWell(
                     onTap: () {
                       Navigator.push(
@@ -260,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.only(bottom: 4.0),
                         child: Text(
                           book.name,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16.0,
                           ),

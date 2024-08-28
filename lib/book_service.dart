@@ -4,15 +4,17 @@ import 'book.dart';
 class BookService {
   final CollectionReference bookCollection =
       FirebaseFirestore.instance.collection("books");
+  final CollectionReference schoolCollection =
+      FirebaseFirestore.instance.collection("schools");
 
   Future<void> addBook(Book book) async {
     try {
       final docRef =
           FirebaseFirestore.instance.collection('books').doc(book.id);
       await docRef.set(book.toMap());
-      print("Book '${book.name}' added successfully!");
+      // print("Book '${book.name}' added successfully!");
     } on FirebaseException catch (e) {
-      print("Error adding book: ${e.message}");
+      // print("Error adding book: ${e.message}");
       // Handle potential errors (e.g., network issues, duplicate IDs)
     }
   }
@@ -21,12 +23,12 @@ class BookService {
     try {
       final docRef = bookCollection.doc(bookId);
       await docRef.delete();
-      print("Book with ID '$bookId' deleted successfully!");
+      // print("Book with ID '$bookId' deleted successfully!");
     } on FirebaseException catch (e) {
-      print("Error deleting book: ${e.message}");
+      // print("Error deleting book: ${e.message}");
       // Handle potential errors (e.g., network issues, non-existent document)
     } catch (e) {
-      print("Unexpected error: $e");
+      // print("Unexpected error: $e");
     }
   }
 
@@ -37,16 +39,82 @@ class BookService {
         .toList();
   }
 
+  Future<List<Book>> searchBooks(
+      String? nameQuery, String? schoolQuery, String? gradeQuery) async {
+    try {
+      // Initialize a base query
+      Query query = bookCollection;
+
+      // Apply filters only if queries are non-null
+      if (nameQuery != null && nameQuery.isNotEmpty) {
+        query = query.where('name', isEqualTo: nameQuery.toLowerCase());
+      }
+
+      if (schoolQuery != null && schoolQuery.isNotEmpty) {
+        query = query.where('schoolName', isEqualTo: schoolQuery.toLowerCase());
+      }
+
+      if (gradeQuery != null && gradeQuery.isNotEmpty) {
+        query = query.where('grade', isEqualTo: gradeQuery);
+      }
+
+      // Execute the query
+      final QuerySnapshot snapshot = await query.get();
+
+      if (snapshot.docs.isEmpty) {
+        // print('No books found matching the provided criteria.');
+      }
+
+      // Map each document to a Book object and return the list
+      return snapshot.docs
+          .map((doc) => Book.fromMap(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e, stackTrace) {
+      // Handle errors
+      // print('Error searching books: $e');
+      // print('Stack trace: $stackTrace');
+      return [];
+    }
+  }
+
+  Future<List<Book>> searchUserBooks(String? phoneNumberQuery) async {
+    try {
+      // Ensure phone number query is not null
+      if (phoneNumberQuery == null) {
+        throw ArgumentError('phoneNumberQuery must be non-null');
+      }
+
+      // Firestore query based on phone number (assuming a field 'ownerPhoneNumber' exists)
+      final QuerySnapshot snapshot = await bookCollection
+          .where('usernumber', isEqualTo: phoneNumberQuery)
+          .get();
+
+      if (snapshot.docs.isEmpty) {
+        print('No books found for the provided phone number.');
+      }
+
+      // Map each document to a Book object and return the list
+      return snapshot.docs
+          .map((doc) => Book.fromMap(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e, stackTrace) {
+      // Handle errors
+      print('Error searching books: $e');
+      print('Stack trace: $stackTrace');
+      return [];
+    }
+  }
+
   Future<List<String>> fetchSchoolNames() async {
     try {
       // Fetch all documents in the book collection
-      final QuerySnapshot snapshot = await bookCollection.get();
+      final QuerySnapshot snapshot = await schoolCollection.get();
 
       // Extract unique school names from the documents
       final List<String> schoolNames = snapshot.docs
           .map((doc) {
             final data = doc.data() as Map<String, dynamic>;
-            return data['schoolName'] as String?;
+            return data['name'] as String?;
           })
           .where((name) => name != null) // Remove any null values
           .toSet()
@@ -84,65 +152,6 @@ class BookService {
     } catch (e) {
       print('Error fetching school grades: $e');
       return []; // Return an empty list in case of an error
-    }
-  }
-
-  Future<List<Book>> searchBooks(
-      String? nameQuery, String? schoolQuery, String? gradeQuery) async {
-    try {
-      // Ensure the queries are not null
-      if (nameQuery == null || schoolQuery == null || gradeQuery == null) {
-        throw ArgumentError('Both nameQuery and schoolQuery must be non-null');
-      }
-
-      // Firestore query
-      final QuerySnapshot snapshot = await bookCollection
-          .where('name', isEqualTo: nameQuery)
-          .where('schoolName', isEqualTo: schoolQuery)
-          .where('grade', isEqualTo: gradeQuery)
-          .get();
-
-      if (snapshot.docs.isEmpty) {
-        print('No books found matching the provided criteria.');
-      }
-
-      // Map each document to a Book object and return the list
-      return snapshot.docs
-          .map((doc) => Book.fromMap(doc.data() as Map<String, dynamic>))
-          .toList();
-    } catch (e, stackTrace) {
-      // Handle errors
-      print('Error searching books: $e');
-      print('Stack trace: $stackTrace');
-      return [];
-    }
-  }
-
-  Future<List<Book>> searchUserBooks(String? phoneNumberQuery) async {
-    try {
-      // Ensure phone number query is not null
-      if (phoneNumberQuery == null) {
-        throw ArgumentError('phoneNumberQuery must be non-null');
-      }
-
-      // Firestore query based on phone number (assuming a field 'ownerPhoneNumber' exists)
-      final QuerySnapshot snapshot = await bookCollection
-          .where('usernumber', isEqualTo: phoneNumberQuery)
-          .get();
-
-      if (snapshot.docs.isEmpty) {
-        print('No books found for the provided phone number.');
-      }
-
-      // Map each document to a Book object and return the list
-      return snapshot.docs
-          .map((doc) => Book.fromMap(doc.data() as Map<String, dynamic>))
-          .toList();
-    } catch (e, stackTrace) {
-      // Handle errors
-      print('Error searching books: $e');
-      print('Stack trace: $stackTrace');
-      return [];
     }
   }
 }

@@ -8,6 +8,7 @@ class Book {
   String status;
   String username;
   String usernumber;
+  String material; // New field
 
   Book({
     required this.id,
@@ -19,19 +20,21 @@ class Book {
     required this.status,
     required this.username,
     required this.usernumber,
+    required this.material, // New argument in constructor
   });
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'name': name.toLowerCase(),
-      'schoolName': schoolName.toUpperCase(),
+      'schoolName': schoolName.toLowerCase(),
       'grade': grade,
       'userAddress': userAddress,
       'price': price,
       'status': status.toLowerCase(),
       'username': username,
       'usernumber': usernumber,
+      'material': material, // Adding new field to the map
     };
   }
 
@@ -46,6 +49,8 @@ class Book {
       status: map['status'] as String? ?? 'Unknown Status',
       username: map['username'] as String? ?? 'Unknown Username',
       usernumber: map['usernumber'] as String? ?? 'Unknown Usernumber',
+      material:
+          map['material'] as String? ?? 'Unknown Material', // Handle new field
     );
   }
 }

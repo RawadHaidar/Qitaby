@@ -18,9 +18,55 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _retypePasswordController =
-      TextEditingController(); // New controller for retype password
+      TextEditingController();
 
-  void _signUp() async {
+  void _showConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          // title: Text('Confirm Sign Up'),
+          content: RichText(
+            text: const TextSpan(
+              children: <TextSpan>[
+                TextSpan(
+                  text:
+                      'Welcome to our online platform dedicated to buying and selling school books within Beirut, Lebanon. \n\n',
+                  style: TextStyle(fontWeight: FontWeight.normal),
+                ),
+                TextSpan(
+                  text: 'Privacy Information Notice: \n',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(
+                  text:
+                      'Please note that by choosing to sell or share your books on our platform, your phone number and profile information will be visible to other users, this enables seamless communication between buyers and sellers, ensuring a smooth transaction process. We prioritize your privacy and encourage users to connect responsibly.',
+                  style: TextStyle(fontWeight: FontWeight.normal),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+                _performSignUp(); // Call the sign-up function
+              },
+              child: const Text('Accept'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _performSignUp() async {
     if (_formKey.currentState?.validate() ?? false) {
       try {
         // Create a new user
@@ -45,7 +91,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         );
       } catch (e) {
         print('Error: $e');
-        // Show error message to user
+        // Handle any errors here if needed
       }
     }
   }
@@ -53,7 +99,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Sign Up')),
+      appBar: AppBar(title: const Text('Sign Up')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -62,7 +108,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             children: [
               TextFormField(
                 controller: _usernameController,
-                decoration: InputDecoration(labelText: 'Username'),
+                decoration: const InputDecoration(labelText: 'Username'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your username';
@@ -72,7 +118,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               TextFormField(
                 controller: _addressController,
-                decoration: InputDecoration(labelText: 'Address'),
+                decoration: const InputDecoration(labelText: 'Address'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your address';
@@ -97,7 +143,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
                 validator: (value) {
                   if (value == null ||
-                      value.length != 11 ||
+                      value.length != 12 ||
                       !RegExp(r'^\+961\d{8}$').hasMatch(value)) {
                     return 'Please enter a valid 8-digit phone number';
                   }
@@ -106,7 +152,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               TextFormField(
                 controller: _passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
+                decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -117,7 +163,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               TextFormField(
                 controller: _retypePasswordController,
-                decoration: InputDecoration(labelText: 'Retype Password'),
+                decoration: const InputDecoration(labelText: 'Retype Password'),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -130,8 +176,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
               ),
               ElevatedButton(
-                onPressed: _signUp,
-                child: Text('Sign Up'),
+                onPressed: _showConfirmationDialog, // Show confirmation dialog
+                child: const Text('Sign Up'),
               ),
             ],
           ),

@@ -25,7 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _books.removeAt(index);
       });
     }).catchError((error) {
-      print("Failed to delete book: $error");
+      // print("Failed to delete book: $error");
     });
   }
 
@@ -35,17 +35,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Delete Book"),
+          title: const Text("Delete Book"),
           content: Text("Are you sure you want to delete '${book.name}'?"),
           actions: [
             TextButton(
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
               onPressed: () {
                 Navigator.of(context).pop(); // Dismiss the dialog
               },
             ),
             TextButton(
-              child: Text("Delete"),
+              child: const Text("Delete"),
               onPressed: () {
                 _deleteBook(index);
                 Navigator.of(context).pop(); // Dismiss the dialog
@@ -69,7 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: const Text('Profile'),
       ),
       body: Consumer<AuthService>(
         builder: (context, authService, child) {
@@ -77,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             future: authService.getUserData(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (snapshot.hasData) {
@@ -119,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(
                         onPressed: () => _searchBooks(phoneNumber.toString()),
-                        child: Text('View my books'),
+                        child: const Text('View my books'),
                       ),
                     ),
                     Expanded(
@@ -132,7 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               borderRadius: BorderRadius.circular(12.0),
                             ),
                             elevation: 4.0,
-                            margin: EdgeInsets.symmetric(
+                            margin: const EdgeInsets.symmetric(
                                 vertical: 8.0, horizontal: 16.0),
                             child: InkWell(
                               onTap: () {
@@ -150,7 +150,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   padding: const EdgeInsets.only(bottom: 4.0),
                                   child: Text(
                                     book.name,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16.0,
                                     ),
@@ -162,14 +162,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   children: [
                                     Text(
                                       '\$${book.price.toString()}',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 12.0,
                                       ),
                                     ),
                                     IconButton(
-                                      icon:
-                                          Icon(Icons.delete, color: Colors.red),
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
                                       onPressed: () {
                                         _showDeleteConfirmationDialog(
                                             context, book, index);
@@ -186,7 +186,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 );
               } else {
-                return Center(child: Text('No user data found'));
+                return const Center(child: Text('No user data found'));
               }
             },
           );

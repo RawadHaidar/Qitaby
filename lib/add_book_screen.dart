@@ -19,6 +19,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
   String? selectedSchoolName;
   String? selectedStatus;
+  String? selectedMaterial; // Add variable to store selected material
   List<String> schoolNames = [];
   String? errorMessage;
 
@@ -65,7 +66,9 @@ class _AddBookScreenState extends State<AddBookScreen> {
         _addressController.text.isEmpty ||
         _priceController.text.isEmpty ||
         selectedSchoolName == null ||
-        selectedStatus == null) {
+        selectedStatus == null ||
+        selectedMaterial == null) {
+      // Check if material is selected
       setState(() {
         errorMessage = 'Please fill out all fields';
       });
@@ -80,6 +83,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
       userAddress: userAddress ?? _addressController.text,
       price: double.parse(_priceController.text),
       status: selectedStatus!,
+      material: selectedMaterial!, // Include material in book creation
       username: username ?? 'Anonymous', // Use fetched or fallback value
       usernumber: userNumber ?? 'Unknown', // Use fetched or fallback value
     );
@@ -107,30 +111,100 @@ class _AddBookScreenState extends State<AddBookScreen> {
         (email != null && email.length >= 13) ? email.substring(0, 12) : '';
 
     return Scaffold(
-      appBar: AppBar(title: Text('Add Book')),
+      appBar: AppBar(title: const Text('Add Book')),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+            Autocomplete<String>(
+              optionsBuilder: (TextEditingValue textEditingValue) {
+                if (textEditingValue.text.isEmpty) {
+                  return const Iterable<String>.empty();
+                }
+                return [
+                  'Mathematics',
+                  'Physics',
+                  'Biology',
+                  'Chemistry',
+                  'French (language)',
+                  'English (language)',
+                  'اللغة العربية',
+                  'التربية الوطنية والتنشئة المدنية',
+                  'التاريخ',
+                  'الجغرافيا',
+                  'Other'
+                ].where((String option) {
+                  return option
+                      .toLowerCase()
+                      .contains(textEditingValue.text.toLowerCase());
+                });
+              },
+              onSelected: (String selection) {
+                setState(() {
+                  selectedMaterial = selection;
+                });
+              },
+              fieldViewBuilder: (BuildContext context,
+                  TextEditingController textEditingController,
+                  FocusNode focusNode,
+                  VoidCallback onFieldSubmitted) {
+                return TextField(
+                  controller: textEditingController,
+                  focusNode: focusNode,
+                  decoration: const InputDecoration(
+                    labelText: 'Select Material',
+                  ),
+                );
+              },
+              displayStringForOption: (String option) => option,
+            ),
+            // DropdownButton<String>(
+            //   value: selectedMaterial,
+            //   hint: Text('Select Material'),
+            //   onChanged: (String? newValue) {
+            //     setState(() {
+            //       selectedMaterial = newValue;
+            //     });
+            //   },
+            //   items: [
+            //     'Mathematics',
+            //     'Physics',
+            //     'Biology',
+            //     'Chemistry',
+            //     'French (language)',
+            //     'English (language)',
+            //     'اللغة العربية',
+            //     'التربية الوطنية والتنشئة المدنية',
+            //     'التاريخ',
+            //     'الجغرافيا',
+            //     'Other'
+            //   ].map<DropdownMenuItem<String>>((String value) {
+            //     return DropdownMenuItem<String>(
+            //       value: value,
+            //       child: Text(value),
+            //     );
+            //   }).toList(),
+            // ),
             TextField(
               controller: _nameController,
-              decoration: InputDecoration(labelText: 'Book Name'),
+              decoration: const InputDecoration(labelText: 'Book Name'),
             ),
             TextField(
               controller: _gradeController,
-              decoration: InputDecoration(labelText: 'Grade'),
+              decoration: const InputDecoration(labelText: 'Grade'),
             ),
             TextField(
               controller: _addressController,
-              decoration: InputDecoration(labelText: 'Address'),
+              decoration: const InputDecoration(labelText: 'Your address'),
             ),
             TextField(
               controller: _priceController,
-              decoration: InputDecoration(labelText: 'Price'),
+              decoration: const InputDecoration(labelText: 'Price'),
               keyboardType: TextInputType.number,
             ),
             Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Autocomplete<String>(
                 optionsBuilder: (TextEditingValue textEditingValue) {
                   if (textEditingValue.text.isEmpty) {
@@ -152,7 +226,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                   return TextField(
                     controller: textEditingController,
                     focusNode: focusNode,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Select School Name',
                     ),
                   );
@@ -162,7 +236,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
             ),
             DropdownButton<String>(
               value: selectedStatus,
-              hint: Text('Select Status'),
+              hint: const Text('Select Status'),
               onChanged: (String? newValue) {
                 setState(() {
                   selectedStatus = newValue;
@@ -176,16 +250,43 @@ class _AddBookScreenState extends State<AddBookScreen> {
                 );
               }).toList(),
             ),
-            SizedBox(height: 20.0),
+            // DropdownButton<String>(
+            //   value: selectedMaterial,
+            //   hint: Text('Select Material'),
+            //   onChanged: (String? newValue) {
+            //     setState(() {
+            //       selectedMaterial = newValue;
+            //     });
+            //   },
+            //   items: [
+            //     'Mathematics',
+            //     'Physics',
+            //     'Biology',
+            //     'Chemistry',
+            //     'French (language)',
+            //     'English (language)',
+            //     'اللغة العربية',
+            //     'التربية الوطنية والتنشئة المدنية',
+            //     'التاريخ',
+            //     'الجغرافيا',
+            //     'Other'
+            //   ].map<DropdownMenuItem<String>>((String value) {
+            //     return DropdownMenuItem<String>(
+            //       value: value,
+            //       child: Text(value),
+            //     );
+            //   }).toList(),
+            // ),
+            const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: _addBook,
               child: Text('Adding Book by $phonenumber'),
             ),
             if (errorMessage != null) ...[
-              SizedBox(height: 10.0),
+              const SizedBox(height: 10.0),
               Text(
                 errorMessage!,
-                style: TextStyle(color: Colors.red),
+                style: const TextStyle(color: Colors.red),
               ),
             ],
           ],
