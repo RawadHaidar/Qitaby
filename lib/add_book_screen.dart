@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,11 +18,10 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
   String? selectedSchoolName;
   String? selectedStatus;
-  String? selectedMaterial; // Add variable to store selected material
+  String? selectedMaterial;
   List<String> schoolNames = [];
   String? errorMessage;
 
-  // Declare the variables to hold the user data
   String? username;
   String? userNumber;
   String? userAddress;
@@ -37,7 +35,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
       });
     });
 
-    _fetchUserData(); // Fetch user data on initialization
+    _fetchUserData();
   }
 
   Future<void> _fetchUserData() async {
@@ -68,7 +66,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
         selectedSchoolName == null ||
         selectedStatus == null ||
         selectedMaterial == null) {
-      // Check if material is selected
       setState(() {
         errorMessage = 'Please fill out all fields';
       });
@@ -83,9 +80,9 @@ class _AddBookScreenState extends State<AddBookScreen> {
       userAddress: userAddress ?? _addressController.text,
       price: double.parse(_priceController.text),
       status: selectedStatus!,
-      material: selectedMaterial!, // Include material in book creation
-      username: username ?? 'Anonymous', // Use fetched or fallback value
-      usernumber: userNumber ?? 'Unknown', // Use fetched or fallback value
+      material: selectedMaterial!,
+      username: username ?? 'Anonymous',
+      usernumber: userNumber ?? 'Unknown',
     );
 
     try {
@@ -104,108 +101,102 @@ class _AddBookScreenState extends State<AddBookScreen> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
-
-    // String? user = authService.currentUser?.phoneNumber;
     String? email = authService.currentUser?.email;
     String phonenumber =
         (email != null && email.length >= 13) ? email.substring(0, 12) : '';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Book')),
+      appBar: AppBar(
+        title: const Text(
+          'Add Book',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.green[700],
+        elevation: 4.0,
+        toolbarHeight: 80.0,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Autocomplete<String>(
-              optionsBuilder: (TextEditingValue textEditingValue) {
-                if (textEditingValue.text.isEmpty) {
-                  return const Iterable<String>.empty();
-                }
-                return [
-                  'Mathematics',
-                  'Physics',
-                  'Biology',
-                  'Chemistry',
-                  'French (language)',
-                  'English (language)',
-                  'اللغة العربية',
-                  'التربية الوطنية والتنشئة المدنية',
-                  'التاريخ',
-                  'الجغرافيا',
-                  'Other'
-                ].where((String option) {
-                  return option
-                      .toLowerCase()
-                      .contains(textEditingValue.text.toLowerCase());
-                });
-              },
-              onSelected: (String selection) {
-                setState(() {
-                  selectedMaterial = selection;
-                });
-              },
-              fieldViewBuilder: (BuildContext context,
-                  TextEditingController textEditingController,
-                  FocusNode focusNode,
-                  VoidCallback onFieldSubmitted) {
-                return TextField(
-                  controller: textEditingController,
-                  focusNode: focusNode,
-                  decoration: const InputDecoration(
-                    labelText: 'Select Material',
-                  ),
-                );
-              },
-              displayStringForOption: (String option) => option,
-            ),
-            // DropdownButton<String>(
-            //   value: selectedMaterial,
-            //   hint: Text('Select Material'),
-            //   onChanged: (String? newValue) {
-            //     setState(() {
-            //       selectedMaterial = newValue;
-            //     });
-            //   },
-            //   items: [
-            //     'Mathematics',
-            //     'Physics',
-            //     'Biology',
-            //     'Chemistry',
-            //     'French (language)',
-            //     'English (language)',
-            //     'اللغة العربية',
-            //     'التربية الوطنية والتنشئة المدنية',
-            //     'التاريخ',
-            //     'الجغرافيا',
-            //     'Other'
-            //   ].map<DropdownMenuItem<String>>((String value) {
-            //     return DropdownMenuItem<String>(
-            //       value: value,
-            //       child: Text(value),
-            //     );
-            //   }).toList(),
-            // ),
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Book Name'),
-            ),
-            TextField(
-              controller: _gradeController,
-              decoration: const InputDecoration(labelText: 'Grade'),
-            ),
-            TextField(
-              controller: _addressController,
-              decoration: const InputDecoration(labelText: 'Your address'),
-            ),
-            TextField(
-              controller: _priceController,
-              decoration: const InputDecoration(labelText: 'Price'),
-              keyboardType: TextInputType.number,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Autocomplete<String>(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Autocomplete<String>(
+                optionsBuilder: (TextEditingValue textEditingValue) {
+                  if (textEditingValue.text.isEmpty) {
+                    return const Iterable<String>.empty();
+                  }
+                  return [
+                    'Mathematics',
+                    'Physics',
+                    'Biology',
+                    'Chemistry',
+                    'French (language)',
+                    'English (language)',
+                    'اللغة العربية',
+                    'التربية الوطنية والتنشئة المدنية',
+                    'التاريخ',
+                    'الجغرافيا',
+                    'Other'
+                  ].where((String option) {
+                    return option
+                        .toLowerCase()
+                        .contains(textEditingValue.text.toLowerCase());
+                  });
+                },
+                onSelected: (String selection) {
+                  setState(() {
+                    selectedMaterial = selection;
+                  });
+                },
+                fieldViewBuilder: (context, textEditingController, focusNode,
+                    onFieldSubmitted) {
+                  return TextField(
+                    controller: textEditingController,
+                    focusNode: focusNode,
+                    decoration: const InputDecoration(
+                      labelText: 'Select Material',
+                      border: OutlineInputBorder(),
+                    ),
+                  );
+                },
+                displayStringForOption: (String option) => option,
+              ),
+              const SizedBox(height: 16.0),
+              TextField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Book Name',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              TextField(
+                controller: _gradeController,
+                decoration: const InputDecoration(
+                  labelText: 'Grade',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              TextField(
+                controller: _addressController,
+                decoration: const InputDecoration(
+                  labelText: 'Your Address',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              TextField(
+                controller: _priceController,
+                decoration: const InputDecoration(
+                  labelText: 'Price',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 16.0),
+              Autocomplete<String>(
                 optionsBuilder: (TextEditingValue textEditingValue) {
                   if (textEditingValue.text.isEmpty) {
                     return const Iterable<String>.empty();
@@ -228,68 +219,48 @@ class _AddBookScreenState extends State<AddBookScreen> {
                     focusNode: focusNode,
                     decoration: const InputDecoration(
                       labelText: 'Select School Name',
+                      border: OutlineInputBorder(),
                     ),
                   );
                 },
                 displayStringForOption: (String option) => option,
               ),
-            ),
-            DropdownButton<String>(
-              value: selectedStatus,
-              hint: const Text('Select Status'),
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedStatus = newValue;
-                });
-              },
-              items: ['Excellent', 'Good', 'Bad']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-            // DropdownButton<String>(
-            //   value: selectedMaterial,
-            //   hint: Text('Select Material'),
-            //   onChanged: (String? newValue) {
-            //     setState(() {
-            //       selectedMaterial = newValue;
-            //     });
-            //   },
-            //   items: [
-            //     'Mathematics',
-            //     'Physics',
-            //     'Biology',
-            //     'Chemistry',
-            //     'French (language)',
-            //     'English (language)',
-            //     'اللغة العربية',
-            //     'التربية الوطنية والتنشئة المدنية',
-            //     'التاريخ',
-            //     'الجغرافيا',
-            //     'Other'
-            //   ].map<DropdownMenuItem<String>>((String value) {
-            //     return DropdownMenuItem<String>(
-            //       value: value,
-            //       child: Text(value),
-            //     );
-            //   }).toList(),
-            // ),
-            const SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: _addBook,
-              child: Text('Adding Book by $phonenumber'),
-            ),
-            if (errorMessage != null) ...[
-              const SizedBox(height: 10.0),
-              Text(
-                errorMessage!,
-                style: const TextStyle(color: Colors.red),
+              const SizedBox(height: 16.0),
+              DropdownButtonFormField<String>(
+                value: selectedStatus,
+                hint: const Text('Select Book Condition'),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedStatus = newValue;
+                  });
+                },
+                items: ['Excellent', 'Good', 'Bad']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
               ),
+              const SizedBox(height: 20.0),
+              ElevatedButton(
+                onPressed: _addBook,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[700],
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                ),
+                child: const Text('Add Book',
+                    style: TextStyle(color: Colors.white)),
+              ),
+              if (errorMessage != null) ...[
+                const SizedBox(height: 10.0),
+                Text(
+                  errorMessage!,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

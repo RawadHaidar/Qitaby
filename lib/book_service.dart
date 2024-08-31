@@ -47,7 +47,7 @@ class BookService {
 
       // Apply filters only if queries are non-null
       if (nameQuery != null && nameQuery.isNotEmpty) {
-        query = query.where('name', isEqualTo: nameQuery.toLowerCase());
+        query = query.where('material', isEqualTo: nameQuery);
       }
 
       if (schoolQuery != null && schoolQuery.isNotEmpty) {
@@ -121,7 +121,7 @@ class BookService {
           .cast<String>() // Ensure the set contains only non-null Strings
           .toList();
 
-      print('Fetched school names: $schoolNames'); // Debug print
+      // print('Fetched school names: $schoolNames'); // Debug print
 
       return schoolNames;
     } catch (e) {
@@ -146,7 +146,7 @@ class BookService {
           .cast<String>() // Ensure the set contains only non-null Strings
           .toList();
 
-      print('Fetched school grades: $schoolGrades'); // Debug print
+      // print('Fetched school grades: $schoolGrades'); // Debug print
 
       return schoolGrades;
     } catch (e) {

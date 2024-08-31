@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:qitaby_web/home_screen.dart';
+import 'package:qitaby_web/home_page.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -12,6 +12,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
+  String? _signUpError; // Variable to hold the error message
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
@@ -25,7 +26,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          // title: Text('Confirm Sign Up'),
           content: RichText(
             text: const TextSpan(
               children: <TextSpan>[
@@ -40,7 +40,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 TextSpan(
                   text:
-                      'Please note that by choosing to sell or share your books on our platform, your phone number and profile information will be visible to other users, this enables seamless communication between buyers and sellers, ensuring a smooth transaction process. We prioritize your privacy and encourage users to connect responsibly.',
+                      'Please note that by choosing to sell or share your books on our platform, your phone number and profile information will be visible to other users. This enables seamless communication between buyers and sellers, ensuring a smooth transaction process. We prioritize your privacy and encourage users to connect responsibly.',
                   style: TextStyle(fontWeight: FontWeight.normal),
                 ),
               ],
@@ -84,14 +84,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
           'password': _passwordController.text,
         });
 
+        // Clear any previous error message
+        setState(() {
+          _signUpError = null;
+        });
+
         // Navigate to the home screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
+          MaterialPageRoute(builder: (context) => HomePage()),
         );
       } catch (e) {
-        print('Error: $e');
-        // Handle any errors here if needed
+        setState(() {
+          _signUpError = 'Error: $e'; // Set error message
+        });
       }
     }
   }
@@ -157,6 +163,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your password';
+                  } else if (value.length < 8) {
+                    return 'Password must be at least 8 characters long';
                   }
                   return null;
                 },
@@ -179,6 +187,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 onPressed: _showConfirmationDialog, // Show confirmation dialog
                 child: const Text('Sign Up'),
               ),
+              if (_signUpError != null) // Display error message
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Text(
+                    _signUpError!,
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
             ],
           ),
         ),

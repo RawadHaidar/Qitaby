@@ -6,8 +6,10 @@ class AboutUsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('About Us'),
+        backgroundColor:
+            Colors.green[800], // Match the style of the provided HTML
       ),
-      body: const Padding(
+      body: Padding(
         padding: EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
@@ -18,6 +20,7 @@ class AboutUsPage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
+                  color: Colors.green[900], // Adjust color to match the theme
                 ),
               ),
               SizedBox(height: 16.0),
@@ -26,7 +29,10 @@ class AboutUsPage extends StatelessWidget {
                 'We understand the challenges that students and parents face when it comes to finding '
                 'affordable and accessible educational resources. That\'s why we created this platform—to make '
                 'the process of obtaining school books easier, more affordable, and more sustainable.',
-                style: TextStyle(fontSize: 16.0),
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.green[800], // Adjust color to match the theme
+                ),
               ),
               SizedBox(height: 24.0),
               Text(
@@ -34,6 +40,7 @@ class AboutUsPage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 22.0,
                   fontWeight: FontWeight.bold,
+                  color: Colors.green[900], // Adjust color to match the theme
                 ),
               ),
               SizedBox(height: 8.0),
@@ -41,7 +48,10 @@ class AboutUsPage extends StatelessWidget {
                 'Our mission is to connect students, parents, and educators across Beirut with the books '
                 'they need for their academic journey. Whether you\'re looking to buy or sell new or used school books, '
                 'our platform offers a convenient and user-friendly experience that ensures everyone has access to the materials they need for success.',
-                style: TextStyle(fontSize: 16.0),
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.green[800], // Adjust color to match the theme
+                ),
               ),
               SizedBox(height: 24.0),
               Text(
@@ -49,6 +59,7 @@ class AboutUsPage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 22.0,
                   fontWeight: FontWeight.bold,
+                  color: Colors.green[900], // Adjust color to match the theme
                 ),
               ),
               SizedBox(height: 8.0),
@@ -57,7 +68,10 @@ class AboutUsPage extends StatelessWidget {
                 'Use our search and filter options to find exactly what you need based on book title, school name, or grade level.\n\n'
                 '- Sell: Have extra books from last year? Easily list them on our platform for others to buy. '
                 'It’s a great way to declutter and help others in the community.',
-                style: TextStyle(fontSize: 16.0),
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.green[800], // Adjust color to match the theme
+                ),
               ),
               SizedBox(height: 24.0),
               Text(
@@ -65,6 +79,7 @@ class AboutUsPage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 22.0,
                   fontWeight: FontWeight.bold,
+                  color: Colors.green[900], // Adjust color to match the theme
                 ),
               ),
               SizedBox(height: 8.0),
@@ -74,18 +89,25 @@ class AboutUsPage extends StatelessWidget {
                 '- Sustainability: By buying and selling used books, you\'re contributing to a more sustainable environment '
                 'by reducing waste and promoting the reuse of resources.\n\n'
                 '- Affordability: Our platform helps you save money by offering a wide range of book prices, including more affordable used options.',
-                style: TextStyle(fontSize: 16.0),
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.green[800], // Adjust color to match the theme
+                ),
               ),
               SizedBox(height: 24.0),
               Text(
                 'Join us in creating a more connected and resourceful educational community in Beirut. '
                 'Together, we can ensure that every student has the tools they need to succeed!',
-                style: TextStyle(fontSize: 16.0),
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.green[800], // Adjust color to match the theme
+                ),
               ),
             ],
           ),
         ),
       ),
+      backgroundColor: Colors.green[50], // Light background color
     );
   }
 }
