@@ -15,6 +15,8 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
+          iconTheme: const IconThemeData(color: Colors.white),
           toolbarHeight: MediaQuery.of(context).size.height / 6,
           title: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),

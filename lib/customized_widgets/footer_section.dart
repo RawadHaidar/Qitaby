@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:qitaby_web/auth_wrapper.dart';
+import 'package:qitaby_web/language_provider.dart';
 
 class FooterSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
+    final currentLanguage = languageProvider.currentLanguage;
     return Container(
       color: Color(0xFF21392A), // Background color from HTML
       padding:
@@ -16,44 +21,49 @@ class FooterSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Logo Section
-                  Row(
-                    children: [
-                      Image.asset(
-                        'assets/logo/137857-200.png',
-                        width: 50,
-                        height: 50,
-                        color: const Color.fromARGB(255, 216, 236, 226),
-                      ),
-                      const SizedBox(width: 8.0),
-                      const Text(
-                        'Qitaby',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 29.88, // Font size from HTML
-                          fontWeight:
-                              FontWeight.bold, // Adjust as per your design
-                          fontFamily:
-                              'HeaderLogoFontFamily', // Adjust as per your design
-                        ),
-                      ),
-                    ],
-                  ),
-                  // Navigation Links
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Row(
+                        children: [
+                          Image.asset(
+                            'assets/logo/137857-200.png',
+                            width: 50,
+                            height: 50,
+                            color: const Color.fromARGB(255, 216, 236, 226),
+                          ),
+                          const SizedBox(width: 8.0),
+                          const Text(
+                            'Qitaby',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 29.88, // Font size from HTML
+                              fontWeight:
+                                  FontWeight.bold, // Adjust as per your design
+                              fontFamily:
+                                  'HeaderLogoFontFamily', // Adjust as per your design
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
                         mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           TextButton(
-                            onPressed: () {}, // Add navigation logic
-                            child: const Text(
-                              'Shop',
-                              style: TextStyle(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AuthWrapper()),
+                              );
+                            }, // Add navigation logic
+                            child: Text(
+                              currentLanguage == 'en' ? 'Shop' : 'Boutique',
+                              style: const TextStyle(
                                 color: Colors.white,
                                 decoration: TextDecoration.underline,
                               ),
@@ -61,7 +71,13 @@ class FooterSection extends StatelessWidget {
                           ),
                           const SizedBox(width: 16.0),
                           TextButton(
-                            onPressed: () {}, // Add navigation logic
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AuthWrapper()),
+                              );
+                            }, // Add navigation logic
                             child: const Text(
                               'Log In or Sign Up',
                               style: TextStyle(
@@ -72,9 +88,16 @@ class FooterSection extends StatelessWidget {
                           ),
                         ],
                       ),
+                    ],
+                  ),
+                  // Navigation Links
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
                       const SizedBox(height: 12.0),
-                      const Text(
-                        'Made with',
+                      Text(
+                        currentLanguage == 'en' ? 'Made with' : 'Fait avec',
                         style: TextStyle(
                           color: Colors.white,
                         ),

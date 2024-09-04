@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:qitaby_web/auth_wrapper.dart';
+import 'package:qitaby_web/language_provider.dart';
 
 class RecycleBooksSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
+    final currentLanguage = languageProvider.currentLanguage;
     return SingleChildScrollView(
       child: Container(
-        height: 600, // Adjust the height as needed
-        decoration: BoxDecoration(
+        // height: 600, // Adjust the height as needed
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: NetworkImage(
               'https://cdn.durable.co/shutterstock/2a7QnTAPcXnG53gGMO1sf9lh3FyucJT515hTW7mXsnNoVM8bm0ITY069ZCxfuT6Y.jpeg', // URL of the background image
@@ -31,21 +36,25 @@ class RecycleBooksSection extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Recycle Books, Enrich Minds',
+                      currentLanguage == 'en'
+                          ? 'Recycle Books, Enrich Minds'
+                          : 'Recycler les livres, enrichir les esprits',
                       style: GoogleFonts.openSans(
                         textStyle: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 50, // Adjust font size as needed
+                          color: Colors.black,
+                          fontSize: 40, // Adjust font size as needed
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      'Join the communal effort to buy and sell affordable used school books in Lebanon.',
+                      currentLanguage == 'en'
+                          ? 'Join the communal effort to buy and sell affordable used school books in Lebanon.'
+                          : 'Rejoignez l’effort communautaire pour acheter et vendre des livres scolaires d’occasion à des prix abordables au Liban.',
                       style: GoogleFonts.openSans(
                         textStyle: const TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 25, // Adjust font size as needed
                         ),
                       ),
@@ -56,6 +65,11 @@ class RecycleBooksSection extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           // Navigation logic to the new page
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AuthWrapper()),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromRGBO(
@@ -73,7 +87,9 @@ class RecycleBooksSection extends StatelessWidget {
                           shadowColor: Colors.transparent,
                         ),
                         child: Text(
-                          'Start Saving',
+                          currentLanguage == 'en'
+                              ? 'Start Saving'
+                              : 'Commencez à économiser',
                           style: GoogleFonts.openSans(
                             textStyle: const TextStyle(
                               fontSize: 25,

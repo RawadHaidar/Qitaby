@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:qitaby_web/language_provider.dart';
 
 class BookListingsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
+    final currentLanguage = languageProvider.currentLanguage;
     return Container(
       padding: EdgeInsets.symmetric(
           vertical: 30.0), // Adjusted for top and bottom padding
@@ -23,16 +27,18 @@ class BookListingsSection extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Expanded(
+                  Expanded(
                     flex: 1,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Convenient Book Listings',
-                          style: TextStyle(
+                          currentLanguage == 'en'
+                              ? 'Convenient Book Listings'
+                              : 'Listes de livres pratiques',
+                          style: const TextStyle(
                             fontSize:
-                                32.0, // Adjusted font size to match 'heading-xlarge'
+                                28.0, // Adjusted font size to match 'heading-xlarge'
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF111828), // Text color from HTML
                           ),
@@ -40,7 +46,9 @@ class BookListingsSection extends StatelessWidget {
                         ),
                         SizedBox(height: 8.0),
                         Text(
-                          'Easily buy and sell used school books in Lebanon through our user-friendly website. Add your own listings and find the books you need with ease.',
+                          currentLanguage == 'en'
+                              ? 'Easily buy and sell used school books in Lebanon through our user-friendly website. Add your own listings and find the books you need with ease.'
+                              : 'Achetez et vendez facilement des livres scolaires d’occasion au Liban grâce à notre site Web convivial. Ajoutez vos propres annonces et trouvez facilement les livres dont vous avez besoin.',
                           style: TextStyle(
                             fontSize:
                                 16.0, // Adjust font size to match paragraph text

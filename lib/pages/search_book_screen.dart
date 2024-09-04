@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:qitaby_web/aboutus.dart';
+import 'package:qitaby_web/customized_widgets/pages_appbar.dart';
+import 'package:qitaby_web/language_provider.dart';
+import 'package:qitaby_web/pages/aboutus.dart';
 import 'package:qitaby_web/auth_service.dart';
-import 'package:qitaby_web/book_details_screen.dart';
-import 'package:qitaby_web/profile_screen.dart';
+import 'package:qitaby_web/pages/book_details_screen.dart';
+import 'package:qitaby_web/pages/profile_screen.dart';
 import 'package:qitaby_web/book_service.dart';
 import 'package:qitaby_web/book.dart';
-import 'package:qitaby_web/add_book_screen.dart';
+import 'package:qitaby_web/pages/add_book_screen.dart';
 
 class SearchBookScreen extends StatefulWidget {
   @override
@@ -48,121 +51,29 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
+    final currentLanguage = languageProvider.currentLanguage;
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 150,
-        backgroundColor:
-            Colors.green[800], // Match the style of the provided HTML
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AboutUsPage()),
-                    );
-                  },
-                  child: Image.asset(
-                    'assets/logo/logo.jpeg',
-                    height: 100,
-                  ),
-                ),
-                const Text(
-                  'Book Shop',
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            Consumer<AuthService>(
-              builder: (context, authService, child) {
-                return FutureBuilder<Map<String, dynamic>?>(
-                  future: authService.getUserData(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (snapshot.hasData) {
-                      Map<String, dynamic>? userData = snapshot.data;
-                      if (userData != null) {
-                        String username =
-                            userData['username'] ?? 'No username found';
-                        return Center(
-                            child: Text(
-                          'user:\n$username',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
-                        ));
-                      } else {
-                        return const Center(child: Text('No username found'));
-                      }
-                    } else {
-                      return const Center(child: Text('Something went wrong'));
-                    }
-                  },
-                );
-              },
-            ),
-          ],
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Row(
-                  children: [
-                    const Text('Profile',
-                        style: TextStyle(color: Colors.white)),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProfileScreen(),
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.person, color: Colors.white),
-                      iconSize: 25.0,
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Text('Logout', style: TextStyle(color: Colors.white)),
-                    IconButton(
-                      icon: const Icon(Icons.logout, color: Colors.white),
-                      onPressed: () async {
-                        await Provider.of<AuthService>(context, listen: false)
-                            .signOut();
-                        Navigator.pop(context);
-                      },
-                      iconSize: 25.0,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      appBar: PagesAppbar(theme: AppBarThemeType.dark),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           const SizedBox(
-            height: 50,
+            height: 10,
+          ),
+          Text(
+            currentLanguage == 'en' ? 'Search books' : 'Rechercher des livres',
+            textAlign: TextAlign.left,
+            style: GoogleFonts.alata(
+              textStyle: const TextStyle(
+                color: Color.fromRGBO(18, 41, 27, 1.0), // White text color
+                fontSize: 25, // Heading large size
+                fontWeight: FontWeight.bold, // Bold weight for emphasis
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 30,
           ),
           Autocomplete<String>(
             optionsBuilder: (TextEditingValue textEditingValue) {
@@ -170,18 +81,19 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
                 return const Iterable<String>.empty();
               }
               return [
-                'Mathematics',
-                'Physics',
-                'Biology',
-                'Chemistry',
+                currentLanguage == 'en' ? 'Mathematics' : 'Mathématiques',
+                currentLanguage == 'en' ? 'Physics' : 'Physique',
+                currentLanguage == 'en' ? 'Science' : 'Science',
+                currentLanguage == 'en' ? 'Chemistry' : 'Chimie',
                 'French (language)',
                 'English (language)',
                 'اللغة العربية',
                 'التربية الوطنية والتنشئة المدنية',
                 'التاريخ',
                 'الجغرافيا',
-                'All',
-                'Other'
+                'الفلسفة',
+                currentLanguage == 'en' ? 'Other' : 'Autre',
+                currentLanguage == 'en' ? 'All' : 'Tout',
               ].where((String option) {
                 return option
                     .toLowerCase()
@@ -191,7 +103,7 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
             onSelected: (String selection) {
               setState(() {
                 selectedMaterial = selection;
-                if (selection == 'All') {
+                if (selection == 'All' || selection == 'Tout') {
                   selectedMaterial = null;
                 }
               });
@@ -201,9 +113,11 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
               return TextField(
                 controller: textEditingController,
                 focusNode: focusNode,
-                decoration: const InputDecoration(
-                  labelText: 'Select Material',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: currentLanguage == 'en'
+                      ? 'Select Material'
+                      : 'Sélectionner le matériau',
+                  border: const OutlineInputBorder(),
                 ),
               );
             },
@@ -253,8 +167,10 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
                 return TextField(
                   controller: textEditingController,
                   focusNode: focusNode,
-                  decoration: const InputDecoration(
-                    labelText: 'Select School Name',
+                  decoration: InputDecoration(
+                    labelText: currentLanguage == 'en'
+                        ? 'Select School Name'
+                        : "Sélectionnez le nom de l'école",
                   ),
                 );
               },
@@ -265,7 +181,9 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
             padding: const EdgeInsets.all(8.0),
             child: DropdownButton<String>(
               value: selectedGrade,
-              hint: const Text('Select Grade'),
+              hint: Text(currentLanguage == 'en'
+                  ? 'Select Grade'
+                  : 'Sélectionnez le niveau'),
               onChanged: (String? newValue) {
                 setState(() {
                   selectedGrade = newValue;
@@ -330,7 +248,7 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
                       ),
                       subtitle: Text(book.schoolName),
                       trailing: Text(
-                        '\$${book.price.toString()}',
+                        '${book.price.toString()} USD',
                         style: TextStyle(
                           color: Colors.green[800], // Match the theme
                         ),
@@ -347,17 +265,17 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
         width: 100.0,
         height: 80.0,
         child: FloatingActionButton(
-          backgroundColor: Colors.green[800], // Match the theme
+          backgroundColor: Color.fromRGBO(18, 41, 27, 1.0), // Match the theme
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => AddBookScreen()),
             );
           },
-          child: const Text(
-            'Sell a book!',
+          child: Text(
+            currentLanguage == 'en' ? 'Sell a book!' : 'Vendez un livre!',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 20.0, color: Colors.white),
+            style: const TextStyle(fontSize: 20.0, color: Colors.white),
           ),
         ),
       ),

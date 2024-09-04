@@ -1,28 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:qitaby_web/aboutus.dart';
+import 'package:qitaby_web/auth_wrapper.dart';
+import 'package:qitaby_web/customized_widgets/language_switch.dart';
+import 'package:qitaby_web/language_provider.dart';
+import 'package:qitaby_web/pages/aboutus.dart';
 import 'package:qitaby_web/auth_service.dart';
-import 'package:qitaby_web/search_book_screen.dart';
-import 'package:qitaby_web/profile_screen.dart';
-import 'package:qitaby_web/add_book_screen.dart';
-import 'package:qitaby_web/main.dart'; // Update with the correct import for the home screen or wrapper
+import 'package:qitaby_web/pages/home_page.dart';
+import 'package:qitaby_web/pages/search_book_screen.dart';
+import 'package:qitaby_web/pages/profile_screen.dart';
+import 'package:qitaby_web/pages/add_book_screen.dart';
 
 class MenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
     final bool isSignedIn = authService.currentUser != null;
+    final languageProvider = Provider.of<LanguageProvider>(context);
+    final currentLanguage = languageProvider.currentLanguage;
 
     return Scaffold(
       backgroundColor:
-          Color(0xFF18291B), // Dark green background similar to the HTML
+          const Color(0xFF18291B), // Dark green background similar to the HTML
       appBar: AppBar(
-        title: Text('Menu'),
-        backgroundColor: Color(0xFF18291B), // Matching AppBar color
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: Text(
+          currentLanguage == 'en' ? 'Menu' : 'Menu',
+          style: const TextStyle(color: Colors.white),
+        ),
+        backgroundColor: const Color(0xFF18291B), // Matching AppBar color
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.close,
               color: Colors.white,
             ),
@@ -58,75 +67,129 @@ class MenuPage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 24.0),
+
+            SizedBox(height: 16.0),
             // Menu Items
             Expanded(
               child: ListView(
                 children: isSignedIn
                     ? [
-                        _buildMenuItem(context, title: 'User Profile',
-                            onPressed: () {
+                        _buildMenuItem(context,
+                            title: currentLanguage == 'en'
+                                ? 'User Profile'
+                                : 'Profil de l’utilisateur', onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ProfileScreen()),
                           );
                         }),
-                        _buildMenuItem(context, title: 'Shop', onPressed: () {
+                        _buildMenuItem(context,
+                            title: currentLanguage == 'en'
+                                ? 'Shop'
+                                : 'Boutique', onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => SearchBookScreen()),
                           );
                         }),
-                        _buildMenuItem(context, title: 'Sell a Book',
-                            onPressed: () {
+                        _buildMenuItem(context,
+                            title: currentLanguage == 'en'
+                                ? 'Sell a Book'
+                                : 'Vendre un livre', onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => AddBookScreen()),
                           );
                         }),
-                        _buildMenuItem(context, title: 'Home', onPressed: () {
-                          Navigator.pop(
-                              context); // Close menu or navigate to Home
-                        }),
-                        _buildMenuItem(context, title: 'About Us',
+                        _buildMenuItem(context,
+                            title: currentLanguage == 'en' ? 'Home' : 'Accueil',
                             onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                          );
+                        }),
+                        _buildMenuItem(context,
+                            title: currentLanguage == 'en'
+                                ? 'About Us'
+                                : 'À propos de nous', onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => AboutUsPage()),
                           );
                         }),
-                        _buildMenuItem(context, title: 'Logout',
-                            onPressed: () async {
+                        _buildMenuItem(context,
+                            title: currentLanguage == 'en'
+                                ? 'Logout'
+                                : 'Se déconnecter', onPressed: () async {
                           await authService.signOut();
-                          Navigator.pop(
-                              context); // Close menu or navigate to Home
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                          );
                         }),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              currentLanguage == 'en' ? 'Language' : 'Langue',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            LanguageSwitch()
+                          ],
+                        ),
                       ]
                     : [
-                        _buildMenuItem(context, title: 'Home', onPressed: () {
-                          Navigator.pop(
-                              context); // Close menu or navigate to Home
-                        }),
-                        _buildMenuItem(context, title: 'About Us',
+                        _buildMenuItem(context,
+                            title: currentLanguage == 'en' ? 'Home' : 'Accueil',
                             onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                          );
+                        }),
+                        _buildMenuItem(context,
+                            title: currentLanguage == 'en'
+                                ? 'About Us'
+                                : 'À propos de nous', onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => AboutUsPage()),
                           );
                         }),
-                        _buildMenuItem(context, title: 'Log In or Sign Up',
-                            onPressed: () {
+                        _buildMenuItem(context,
+                            title: currentLanguage == 'en'
+                                ? 'Log In or Sign Up'
+                                : 'Se connecter ou s’inscrire', onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => AuthWrapper()),
-                          ); // Update with the correct route for authentication
+                          );
                         }),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              currentLanguage == 'en' ? 'Language' : 'Langue',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            LanguageSwitch()
+                          ],
+                        ),
                       ],
               ),
             ),

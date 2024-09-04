@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:qitaby_web/language_provider.dart';
 
 class ServicesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
+    final currentLanguage = languageProvider.currentLanguage;
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
         children: [
           // Header Section
           Container(
-            padding: EdgeInsets.symmetric(vertical: 8.0),
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
-              'Services',
+              currentLanguage == 'en' ? 'Services' : 'Services',
               style: TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
@@ -29,23 +33,32 @@ class ServicesSection extends StatelessWidget {
               ServiceCard(
                 imageUrl:
                     'https://cdn.durable.co/shutterstock/2SbZMUrOKzqmZsVVUZs8PkjmOThhagnv87bG1AmuADjSS7zM8ohyb5PaL3KepGcX.jpeg',
-                title: 'Book Price Updates',
-                description:
-                    'Regularly updated live time prices of used school books.',
+                title: currentLanguage == 'en'
+                    ? 'Book Price Updates'
+                    : 'Mises à jour des prix du livre',
+                description: currentLanguage == 'en'
+                    ? 'Regularly updated live time prices of used school books.'
+                    : 'Prix en directe régulièrement mis à jour des livres scolaires d’occasion.',
               ),
               ServiceCard(
                 imageUrl:
                     'https://cdn.durable.co/shutterstock/38g3neUOghn3d3owxehS9abr06Aq37H9pHSo6ONQmo6sE2cdL8cKC9qWkR2y44LH.jpeg',
-                title: 'Affordable Options',
-                description:
-                    'Access to affordable used school books for those unable to afford new book prices.',
+                title: currentLanguage == 'en'
+                    ? 'Affordable Options'
+                    : 'Options abordables',
+                description: currentLanguage == 'en'
+                    ? 'Access to affordable used school books for those unable to afford new book prices.'
+                    : 'Accès à des livres scolaires d’occasion abordables pour ceux qui n’ont pas les moyens de se payer le prix des livres neufs.',
               ),
               ServiceCard(
                 imageUrl:
                     'https://cdn.durable.co/shutterstock/64mBoGsIbyOtxkJQbRNSJq5uBXkIXOn9GLnrXc35n6PxS0uAWxZZtwhnX3e2Iaca.jpeg',
-                title: 'Online Payment',
-                description:
-                    'Secure and convenient online payment options for book purchases.',
+                title: currentLanguage == 'en'
+                    ? 'Online Payment'
+                    : 'Paiement en ligne',
+                description: currentLanguage == 'en'
+                    ? 'Secure and convenient online payment options for book purchases.'
+                    : 'Options de paiement en ligne sécurisées et pratiques pour l’achat de livres.',
               ),
             ],
           ),

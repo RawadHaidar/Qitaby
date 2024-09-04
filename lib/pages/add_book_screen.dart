@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'book.dart';
-import 'book_service.dart';
-import 'auth_service.dart';
+import 'package:qitaby_web/book.dart';
+import 'package:qitaby_web/book_service.dart';
+import 'package:qitaby_web/auth_service.dart';
+import 'package:qitaby_web/customized_widgets/pages_appbar.dart';
+import 'package:qitaby_web/language_provider.dart';
 
 class AddBookScreen extends StatefulWidget {
   @override
@@ -15,9 +18,11 @@ class _AddBookScreenState extends State<AddBookScreen> {
   final TextEditingController _gradeController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _publisherController = TextEditingController();
+  final TextEditingController _yearController = TextEditingController();
 
   String? selectedSchoolName;
-  String? selectedStatus;
+  String? selectedcondition;
   String? selectedMaterial;
   List<String> schoolNames = [];
   String? errorMessage;
@@ -64,10 +69,21 @@ class _AddBookScreenState extends State<AddBookScreen> {
         _addressController.text.isEmpty ||
         _priceController.text.isEmpty ||
         selectedSchoolName == null ||
-        selectedStatus == null ||
-        selectedMaterial == null) {
+        selectedcondition == null ||
+        selectedMaterial == null ||
+        _publisherController.text.isEmpty || // Check for empty publisher
+        _yearController.text.isEmpty) {
+      // Check for empty year
       setState(() {
         errorMessage = 'Please fill out all fields';
+      });
+      return;
+    }
+    final int? year =
+        int.tryParse(_yearController.text); // Parse year as integer
+    if (year == null) {
+      setState(() {
+        errorMessage = 'Invalid year of publication';
       });
       return;
     }
@@ -79,10 +95,12 @@ class _AddBookScreenState extends State<AddBookScreen> {
       grade: _gradeController.text,
       userAddress: userAddress ?? _addressController.text,
       price: double.parse(_priceController.text),
-      status: selectedStatus!,
+      condition: selectedcondition!,
       material: selectedMaterial!,
       username: username ?? 'Anonymous',
       usernumber: userNumber ?? 'Unknown',
+      publisher: _publisherController.text, // Include publisher
+      yearOfPublication: year, // Include year of publication
     );
 
     try {
@@ -102,42 +120,54 @@ class _AddBookScreenState extends State<AddBookScreen> {
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
     String? email = authService.currentUser?.email;
+    final languageProvider = Provider.of<LanguageProvider>(context);
+    final currentLanguage = languageProvider.currentLanguage;
     String phonenumber =
         (email != null && email.length >= 13) ? email.substring(0, 12) : '';
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Add Book',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.green[700],
-        elevation: 4.0,
-        toolbarHeight: 80.0,
-      ),
+      appBar: PagesAppbar(theme: AppBarThemeType.light),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              const SizedBox(
+                height: 10,
+              ),
+              Text(
+                currentLanguage == 'en' ? 'Add Book' : 'Ajouter un livre',
+                textAlign: TextAlign.left,
+                style: GoogleFonts.alata(
+                  textStyle: const TextStyle(
+                    color: Color.fromRGBO(18, 41, 27, 1.0), // White text color
+                    fontSize: 25, // Heading large size
+                    fontWeight: FontWeight.bold, // Bold weight for emphasis
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
               Autocomplete<String>(
                 optionsBuilder: (TextEditingValue textEditingValue) {
                   if (textEditingValue.text.isEmpty) {
                     return const Iterable<String>.empty();
                   }
                   return [
-                    'Mathematics',
-                    'Physics',
-                    'Biology',
-                    'Chemistry',
+                    currentLanguage == 'en' ? 'Mathematics' : 'Mathématiques',
+                    currentLanguage == 'en' ? 'Physics' : 'Physique',
+                    currentLanguage == 'en' ? 'Science' : 'Science',
+                    currentLanguage == 'en' ? 'Chemistry' : 'Chimie',
                     'French (language)',
                     'English (language)',
                     'اللغة العربية',
                     'التربية الوطنية والتنشئة المدنية',
                     'التاريخ',
                     'الجغرافيا',
-                    'Other'
+                    'الفلسفة',
+                    currentLanguage == 'en' ? 'Other' : 'Autre'
                   ].where((String option) {
                     return option
                         .toLowerCase()
@@ -154,9 +184,11 @@ class _AddBookScreenState extends State<AddBookScreen> {
                   return TextField(
                     controller: textEditingController,
                     focusNode: focusNode,
-                    decoration: const InputDecoration(
-                      labelText: 'Select Material',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: currentLanguage == 'en'
+                          ? 'Select Material'
+                          : 'Sélectionner le matériau',
+                      border: const OutlineInputBorder(),
                     ),
                   );
                 },
@@ -165,9 +197,10 @@ class _AddBookScreenState extends State<AddBookScreen> {
               const SizedBox(height: 16.0),
               TextField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Book Name',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText:
+                      currentLanguage == 'en' ? 'Book Name' : 'Nom du livre',
+                  border: const OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16.0),
@@ -181,16 +214,18 @@ class _AddBookScreenState extends State<AddBookScreen> {
               const SizedBox(height: 16.0),
               TextField(
                 controller: _addressController,
-                decoration: const InputDecoration(
-                  labelText: 'Your Address',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: currentLanguage == 'en'
+                      ? 'Your Address'
+                      : 'Votre adresse',
+                  border: const OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16.0),
               TextField(
                 controller: _priceController,
-                decoration: const InputDecoration(
-                  labelText: 'Price',
+                decoration: InputDecoration(
+                  labelText: currentLanguage == 'en' ? 'Price' : 'Prix',
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
@@ -217,9 +252,11 @@ class _AddBookScreenState extends State<AddBookScreen> {
                   return TextField(
                     controller: textEditingController,
                     focusNode: focusNode,
-                    decoration: const InputDecoration(
-                      labelText: 'Select School Name',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: currentLanguage == 'en'
+                          ? 'Select School Name'
+                          : 'Sélectionnez le nom de l’école',
+                      border: const OutlineInputBorder(),
                     ),
                   );
                 },
@@ -227,30 +264,55 @@ class _AddBookScreenState extends State<AddBookScreen> {
               ),
               const SizedBox(height: 16.0),
               DropdownButtonFormField<String>(
-                value: selectedStatus,
-                hint: const Text('Select Book Condition'),
+                value: selectedcondition,
+                hint: Text(currentLanguage == 'en'
+                    ? 'Select Book Condition'
+                    : 'Sélectionnez l’état du livre'),
                 onChanged: (String? newValue) {
                   setState(() {
-                    selectedStatus = newValue;
+                    selectedcondition = newValue;
                   });
                 },
-                items: ['Excellent', 'Good', 'Bad']
-                    .map<DropdownMenuItem<String>>((String value) {
+                items: [
+                  currentLanguage == 'en' ? 'Excellent' : 'Excellente',
+                  currentLanguage == 'en' ? 'Good' : 'Bien',
+                  currentLanguage == 'en' ? 'Bad' : 'Mauvais'
+                ].map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
                   );
                 }).toList(),
               ),
-              const SizedBox(height: 20.0),
+              const SizedBox(height: 16.0),
+              TextField(
+                controller: _publisherController,
+                decoration: InputDecoration(
+                  labelText: currentLanguage == 'en' ? 'Publisher' : 'Éditeur',
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              TextField(
+                controller: _yearController,
+                decoration: InputDecoration(
+                  labelText: currentLanguage == 'en'
+                      ? 'Year of Publication'
+                      : 'Année de publication',
+                  border: const OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _addBook,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green[700],
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                 ),
-                child: const Text('Add Book',
-                    style: TextStyle(color: Colors.white)),
+                child: Text(
+                    currentLanguage == 'en' ? 'Add Book' : 'Ajouter un livre',
+                    style: const TextStyle(color: Colors.white)),
               ),
               if (errorMessage != null) ...[
                 const SizedBox(height: 10.0),

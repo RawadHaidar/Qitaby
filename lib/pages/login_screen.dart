@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:qitaby_web/customized_widgets/pages_appbar.dart';
+import 'package:qitaby_web/pages/home_page.dart';
 import 'sign_up_screen.dart'; // Import the SignUpScreen
 
 class SignInScreen extends StatefulWidget {
@@ -46,11 +49,28 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign In')),
+      appBar: PagesAppbar(theme: AppBarThemeType.light),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              'Login',
+              textAlign: TextAlign.left,
+              style: GoogleFonts.alata(
+                textStyle: const TextStyle(
+                  color: Color.fromRGBO(18, 41, 27, 1.0), // White text color
+                  fontSize: 25, // Heading large size
+                  fontWeight: FontWeight.bold, // Bold weight for emphasis
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
             TextField(
               controller: _phoneNumberController,
               decoration: const InputDecoration(labelText: 'Phone Number'),

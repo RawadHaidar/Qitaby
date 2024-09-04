@@ -5,10 +5,12 @@ class Book {
   String grade;
   String userAddress;
   double? price;
-  String status;
+  String condition;
   String username;
   String usernumber;
-  String material; // New field
+  String material;
+  String publisher; // New field
+  int yearOfPublication; // New field
 
   Book({
     required this.id,
@@ -16,11 +18,13 @@ class Book {
     required this.schoolName,
     required this.grade,
     required this.userAddress,
-    this.price, // Nullable field
-    required this.status,
+    this.price,
+    required this.condition,
     required this.username,
     required this.usernumber,
-    required this.material, // New argument in constructor
+    required this.material,
+    required this.publisher, // New argument in constructor
+    required this.yearOfPublication, // New argument in constructor
   });
 
   Map<String, dynamic> toMap() {
@@ -31,10 +35,12 @@ class Book {
       'grade': grade,
       'userAddress': userAddress,
       'price': price,
-      'status': status.toLowerCase(),
+      'condition': condition.toLowerCase(),
       'username': username,
       'usernumber': usernumber,
-      'material': material, // Adding new field to the map
+      'material': material,
+      'publisher': publisher, // Adding new field to the map
+      'yearOfPublication': yearOfPublication, // Adding new field to the map
     };
   }
 
@@ -45,12 +51,15 @@ class Book {
       schoolName: map['schoolName'] as String? ?? 'Unknown School',
       grade: map['grade'] as String? ?? 'Unknown Grade',
       userAddress: map['userAddress'] as String? ?? 'Unknown Address',
-      price: (map['price'] as num?)?.toDouble(), // Handle nullable price
-      status: map['status'] as String? ?? 'Unknown Status',
+      price: (map['price'] as num?)?.toDouble(),
+      condition: map['condition'] as String? ?? 'Unknown condition',
       username: map['username'] as String? ?? 'Unknown Username',
       usernumber: map['usernumber'] as String? ?? 'Unknown Usernumber',
-      material:
-          map['material'] as String? ?? 'Unknown Material', // Handle new field
+      material: map['material'] as String? ?? 'Unknown Material',
+      publisher: map['publisher'] as String? ??
+          'Unknown Publisher', // Handle new field
+      yearOfPublication:
+          map['yearOfPublication'] as int? ?? 0, // Handle new field
     );
   }
 }

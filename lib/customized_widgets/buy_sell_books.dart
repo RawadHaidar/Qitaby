@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:qitaby_web/main.dart';
+import 'package:provider/provider.dart';
+import 'package:qitaby_web/auth_wrapper.dart';
+import 'package:qitaby_web/language_provider.dart';
 
 class BuySellBooksSection extends StatefulWidget {
   @override
@@ -24,6 +26,8 @@ class _BuySellBooksSectionState extends State<BuySellBooksSection>
 
   @override
   Widget build(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
+    final currentLanguage = languageProvider.currentLanguage;
     return SingleChildScrollView(
       child: Container(
         color: Color.fromRGBO(33, 57, 42, 1),
@@ -54,7 +58,9 @@ class _BuySellBooksSectionState extends State<BuySellBooksSection>
                           curve: Curves.easeOut,
                           opacity: _isVisible ? 1.0 : 0.0,
                           child: Text(
-                            'Buy and Sell Used Books',
+                            currentLanguage == 'en'
+                                ? 'Buy and Sell Used Books'
+                                : 'Acheter et vendre des livres d’occasion',
                             style: GoogleFonts.alata(
                               textStyle: const TextStyle(
                                 color: Colors.white, // White text color
@@ -77,7 +83,9 @@ class _BuySellBooksSectionState extends State<BuySellBooksSection>
                           curve: Curves.easeOut,
                           opacity: _isVisible ? 1.0 : 0.0,
                           child: Text(
-                            'Find affordable school books or list yours for sale today.',
+                            currentLanguage == 'en'
+                                ? 'Find affordable school books or list yours for sale today.'
+                                : 'Trouvez des livres scolaires abordables ou mettez le vôtre en vente dès aujourd’hui.',
                             style: GoogleFonts.alata(
                               textStyle: const TextStyle(
                                 fontStyle: FontStyle
@@ -125,7 +133,9 @@ class _BuySellBooksSectionState extends State<BuySellBooksSection>
                                   .transparent, // No shadow as per the style
                             ),
                             child: Text(
-                              'Get Started',
+                              currentLanguage == 'en'
+                                  ? 'Get Started'
+                                  : 'Démarrer',
                               style: GoogleFonts.alata(
                                 textStyle: const TextStyle(
                                   fontSize: 18,
