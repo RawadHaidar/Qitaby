@@ -13,7 +13,7 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   final _auth = FirebaseAuth.instance;
 
-  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   String errormessage = '';
@@ -22,11 +22,15 @@ class _SignInScreenState extends State<SignInScreen> {
     try {
       // Sign in the user
       await _auth.signInWithEmailAndPassword(
-        email: "+961${_phoneNumberController.text}@example.com",
+        email: _emailController.text,
         password: _passwordController.text,
       );
 
-      // Navigate to the home screen or show success message
+      // Navigate to the home screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
     } catch (e) {
       print('Error: $e');
       // Show error message to user
@@ -41,9 +45,41 @@ class _SignInScreenState extends State<SignInScreen> {
   void _navigateToSignUp() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => SignUpScreen()), // Navigate to SignUpScreen
+      MaterialPageRoute(builder: (context) => SignUpScreen()),
     );
+  }
+
+  // Function to send password reset email
+  void _resetPassword() async {
+    try {
+      String email = _emailController.text;
+
+      // Send password reset email
+      await _auth.sendPasswordResetEmail(email: email);
+
+      // Show a message to inform the user that the password reset email was sent
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Password Reset'),
+          content: const Text(
+              'A password reset link has been sent to your email. Please check your inbox.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        errormessage = e
+            .toString()
+            .replaceFirst('[firebase_auth/invalid-credential] ', '');
+      });
+    }
   }
 
   @override
@@ -54,9 +90,7 @@ class _SignInScreenState extends State<SignInScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             Text(
               'Login',
               textAlign: TextAlign.left,
@@ -68,21 +102,17 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 30,
-            ),
+            const SizedBox(height: 30),
             TextField(
-              controller: _phoneNumberController,
-              decoration: const InputDecoration(labelText: 'Phone Number'),
+              controller: _emailController,
+              decoration: const InputDecoration(labelText: 'Email Address'),
             ),
             TextField(
               controller: _passwordController,
               decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: _signIn,
               child: const Text('Sign In'),
@@ -93,7 +123,15 @@ class _SignInScreenState extends State<SignInScreen> {
               child: const Text('Don\'t have an account? Sign Up'),
             ),
             const SizedBox(height: 20),
-            Text(style: TextStyle(color: Colors.red), "$errormessage"),
+            TextButton(
+              onPressed: _resetPassword, // Reset password button
+              child: const Text('Forgot Password?'),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              style: const TextStyle(color: Colors.red),
+              errormessage,
+            ),
           ],
         ),
       ),

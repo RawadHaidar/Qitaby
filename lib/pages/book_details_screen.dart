@@ -59,6 +59,13 @@ class BookDetailsScreen extends StatelessWidget {
             const SizedBox(height: 8.0),
             Text(
               currentLanguage == 'en'
+                  ? 'Class: ${book.grade}'
+                  : 'Classe: ${book.grade}',
+              style: const TextStyle(fontSize: 18.0),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              currentLanguage == 'en'
                   ? 'School: ${book.schoolName}'
                   : 'École: ${book.schoolName}',
               style: const TextStyle(fontSize: 18.0),

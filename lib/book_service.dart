@@ -40,7 +40,7 @@ class BookService {
   }
 
   Future<List<Book>> searchBooks(
-      String? nameQuery, String? schoolQuery, String? gradeQuery) async {
+      String? nameQuery, String? schoolQuery, String? classquery) async {
     try {
       // Initialize a base query
       Query query = bookCollection;
@@ -54,8 +54,8 @@ class BookService {
         query = query.where('schoolName', isEqualTo: schoolQuery.toLowerCase());
       }
 
-      if (gradeQuery != null && gradeQuery.isNotEmpty) {
-        query = query.where('grade', isEqualTo: gradeQuery);
+      if (classquery != null && classquery.isNotEmpty) {
+        query = query.where('class', isEqualTo: classquery);
       }
 
       // Execute the query
@@ -139,7 +139,7 @@ class BookService {
       final List<String> schoolGrades = snapshot.docs
           .map((doc) {
             final data = doc.data() as Map<String, dynamic>;
-            return data['grade'] as String?;
+            return data['class'] as String?;
           })
           .where((grade) => grade != null) // Remove any null values
           .toSet()

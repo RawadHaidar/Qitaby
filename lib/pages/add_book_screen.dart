@@ -206,8 +206,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
               const SizedBox(height: 16.0),
               TextField(
                 controller: _gradeController,
-                decoration: const InputDecoration(
-                  labelText: 'Grade',
+                decoration: InputDecoration(
+                  labelText: currentLanguage == 'en' ? 'Class' : 'Classe',
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -225,7 +225,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
               TextField(
                 controller: _priceController,
                 decoration: InputDecoration(
-                  labelText: currentLanguage == 'en' ? 'Price' : 'Prix',
+                  labelText: currentLanguage == 'en' ? 'Price USD' : 'Prix USD',
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,

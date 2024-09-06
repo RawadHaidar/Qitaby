@@ -20,10 +20,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _retypePasswordController =
       TextEditingController();
+
+  bool _isVerificationEmailSent = false; // Track if email verification is sent
+  bool _isVerifying = false; // Show loading indicator while checking email
 
   void _showConfirmationDialog() {
     showDialog(
@@ -37,8 +41,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               children: <TextSpan>[
                 TextSpan(
                   text: currentLanguage == 'en'
-                      ? 'Welcome to our online platform dedicated to buying and selling school books within Beirut, Lebanon. \n\n'
-                      : "Bienvenue sur notre plateforme en ligne dédiée à l'achat et à la vente de livres scolaires à Beyrouth, au Liban. \n\n",
+                      ? 'Welcome to our platform for buying and selling school books in Beirut, Lebanon. \n\n'
+                      : "Bienvenue sur notre plateforme d'achat et de vente de livres scolaires à Beyrouth, au Liban. \n\n",
                   style: const TextStyle(fontWeight: FontWeight.normal),
                 ),
                 TextSpan(
@@ -49,8 +53,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 TextSpan(
                   text: currentLanguage == 'en'
-                      ? 'Please note that by choosing to sell or share your books on our platform, your phone number and profile information will be visible to other users. This enables seamless communication between buyers and sellers, ensuring a smooth transaction process. We prioritize your privacy and encourage users to connect responsibly.'
-                      : "Veuillez noter que si vous choisissez de vendre ou de partager vos livres sur notre plateforme, votre numéro de téléphone et les informations de votre profil seront visibles par les autres utilisateurs. Cela permet une communication transparente entre les acheteurs et les vendeurs, garantissant ainsi un processus de transaction fluide. Nous accordons la priorité à votre vie privée et encourageons les utilisateurs à se connecter de manière responsable.",
+                      ? 'By selling or sharing your books, your phone number and profile will be visible to others.'
+                      : "En vendant ou partageant vos livres, votre numéro de téléphone et votre profil seront visibles.",
                   style: const TextStyle(fontWeight: FontWeight.normal),
                 ),
               ],
@@ -82,34 +86,63 @@ class _SignUpScreenState extends State<SignUpScreen> {
         // Create a new user
         UserCredential userCredential =
             await _auth.createUserWithEmailAndPassword(
-          email: "${_phoneNumberController.text}@example.com",
+          email: _emailController.text,
           password: _passwordController.text,
         );
 
-        // Save user data to Firestore
-        await _firestore.collection('users').doc(userCredential.user?.uid).set({
-          'username': _usernameController.text,
-          'address': _addressController.text,
-          'phone_number': _phoneNumberController.text,
-          'password': _passwordController.text,
-        });
-
-        // Clear any previous error message
-        setState(() {
-          _signUpError = null;
-        });
-
-        // Navigate to the home screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
+        // Send email verification
+        User? user = userCredential.user;
+        if (user != null && !user.emailVerified) {
+          await user.sendEmailVerification();
+          setState(() {
+            _isVerificationEmailSent = true;
+          });
+          // Start monitoring email verification
+          _monitorEmailVerification(user);
+        }
       } catch (e) {
         setState(() {
           _signUpError = 'Error: $e'; // Set error message
         });
       }
     }
+  }
+
+  void _monitorEmailVerification(User user) async {
+    setState(() {
+      _isVerifying = true;
+    });
+
+    // Check every 3 seconds if the email is verified
+    while (!user.emailVerified) {
+      await Future.delayed(const Duration(seconds: 3));
+      await user.reload(); // Reload user to get latest info
+      user = _auth.currentUser!;
+    }
+
+    setState(() {
+      _isVerifying = false;
+    });
+
+    // If the email is verified, save user data to Firestore
+    await _firestore.collection('users').doc(user.uid).set({
+      'username': _usernameController.text,
+      'address': _addressController.text,
+      'email': _emailController.text,
+      'phone_number': _phoneNumberController.text,
+      'rating': 'Not rated',
+    });
+
+    // Clear any previous error message
+    setState(() {
+      _signUpError = null;
+    });
+
+    // Navigate to the home screen
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage()),
+    );
   }
 
   @override
@@ -124,23 +157,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
           key: _formKey,
           child: Column(
             children: [
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               Text(
-                'Sign Up',
-                textAlign: TextAlign.left,
+                currentLanguage == 'en' ? 'Sign Up' : 'S’inscrire',
                 style: GoogleFonts.alata(
                   textStyle: const TextStyle(
-                    color: Color.fromRGBO(18, 41, 27, 1.0), // White text color
-                    fontSize: 25, // Heading large size
-                    fontWeight: FontWeight.bold, // Bold weight for emphasis
+                    color: Color.fromRGBO(18, 41, 27, 1.0),
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 30,
-              ),
+              const SizedBox(height: 30),
               TextFormField(
                 controller: _usernameController,
                 decoration: InputDecoration(
@@ -170,6 +198,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
               ),
               TextFormField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                    labelText: currentLanguage == 'en'
+                        ? 'Email Address'
+                        : 'Adresse Courriel'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return currentLanguage == 'en'
+                        ? 'Please enter your Email Address'
+                        : "Veuillez entrer votre Adresse Courriel";
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
                 controller: _phoneNumberController,
                 decoration: InputDecoration(
                   labelText: currentLanguage == 'en'
@@ -181,8 +224,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   _phoneNumberController.value = TextEditingValue(
                     text: '+961${value.replaceAll('+961', '')}',
                     selection: TextSelection.fromPosition(
-                      TextPosition(
-                          offset: value.length + 4), // Adjust offset as needed
+                      TextPosition(offset: value.length + 4),
                     ),
                   );
                 },
@@ -237,11 +279,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
+              const SizedBox(
+                height: 16.0,
+              ),
               ElevatedButton(
-                onPressed: _showConfirmationDialog, // Show confirmation dialog
+                onPressed: _showConfirmationDialog,
                 child: const Text('Sign Up'),
               ),
-              if (_signUpError != null) // Display error message
+              if (_isVerificationEmailSent)
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'A verification email has been sent to your email address. Please verify and sign in.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                      if (_isVerifying)
+                        const CircularProgressIndicator(), // Show loader while checking verification
+                    ],
+                  ),
+                ),
+              if (_signUpError != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: Text(

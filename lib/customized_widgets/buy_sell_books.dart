@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:qitaby_web/auth_wrapper.dart';
+import 'package:qitaby_web/auth_wrapper_toshop.dart';
 import 'package:qitaby_web/language_provider.dart';
 
 class BuySellBooksSection extends StatefulWidget {
@@ -113,7 +114,7 @@ class _BuySellBooksSectionState extends State<BuySellBooksSection>
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => AuthWrapper()),
+                                    builder: (context) => AuthWrapperToshop()),
                               );
                             },
                             style: ElevatedButton.styleFrom(
