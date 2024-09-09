@@ -22,6 +22,9 @@ class AuthService with ChangeNotifier {
 
       if (userDoc.exists) {
         Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+
+        userData['uid'] = uid;
+
         return userData;
       }
     }

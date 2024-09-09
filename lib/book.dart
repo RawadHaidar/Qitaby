@@ -8,9 +8,11 @@ class Book {
   String condition;
   String username;
   String usernumber;
+  String usertype;
   String material;
   String publisher; // New field
   int yearOfPublication; // New field
+  String userid;
 
   Book({
     required this.id,
@@ -22,9 +24,11 @@ class Book {
     required this.condition,
     required this.username,
     required this.usernumber,
+    required this.usertype,
     required this.material,
     required this.publisher, // New argument in constructor
     required this.yearOfPublication, // New argument in constructor
+    required this.userid,
   });
 
   Map<String, dynamic> toMap() {
@@ -38,9 +42,11 @@ class Book {
       'condition': condition.toLowerCase(),
       'username': username,
       'usernumber': usernumber,
+      'usertype': usertype,
       'material': material,
       'publisher': publisher, // Adding new field to the map
       'yearOfPublication': yearOfPublication, // Adding new field to the map
+      'uid': userid
     };
   }
 
@@ -55,11 +61,13 @@ class Book {
       condition: map['condition'] as String? ?? 'Unknown condition',
       username: map['username'] as String? ?? 'Unknown Username',
       usernumber: map['usernumber'] as String? ?? 'Unknown Usernumber',
+      usertype: map['usertype'] as String? ?? 'Unknown Usertype',
       material: map['material'] as String? ?? 'Unknown Material',
       publisher: map['publisher'] as String? ??
           'Unknown Publisher', // Handle new field
       yearOfPublication:
           map['yearOfPublication'] as int? ?? 0, // Handle new field
+      userid: map['uid'] as String? ?? 'Unknown uid',
     );
   }
 }

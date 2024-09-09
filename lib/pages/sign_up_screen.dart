@@ -131,6 +131,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       'email': _emailController.text,
       'phone_number': _phoneNumberController.text,
       'rating': 'Not rated',
+      'type': 'Regular user',
+      'uid': user.uid
     });
 
     // Clear any previous error message

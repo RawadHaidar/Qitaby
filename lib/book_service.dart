@@ -6,38 +6,8 @@ class BookService {
       FirebaseFirestore.instance.collection("books");
   final CollectionReference schoolCollection =
       FirebaseFirestore.instance.collection("schools");
-
-  Future<void> addBook(Book book) async {
-    try {
-      final docRef =
-          FirebaseFirestore.instance.collection('books').doc(book.id);
-      await docRef.set(book.toMap());
-      // print("Book '${book.name}' added successfully!");
-    } on FirebaseException catch (e) {
-      // print("Error adding book: ${e.message}");
-      // Handle potential errors (e.g., network issues, duplicate IDs)
-    }
-  }
-
-  Future<void> deleteBook(String bookId) async {
-    try {
-      final docRef = bookCollection.doc(bookId);
-      await docRef.delete();
-      // print("Book with ID '$bookId' deleted successfully!");
-    } on FirebaseException catch (e) {
-      // print("Error deleting book: ${e.message}");
-      // Handle potential errors (e.g., network issues, non-existent document)
-    } catch (e) {
-      // print("Unexpected error: $e");
-    }
-  }
-
-  Future<List<Book>> getBooks() async {
-    final QuerySnapshot snapshot = await bookCollection.get();
-    return snapshot.docs
-        .map((doc) => Book.fromMap(doc.data() as Map<String, dynamic>))
-        .toList();
-  }
+  final CollectionReference userCollection =
+      FirebaseFirestore.instance.collection("users");
 
   Future<List<Book>> searchBooks(
       String? nameQuery, String? schoolQuery, String? classquery) async {
@@ -77,20 +47,51 @@ class BookService {
     }
   }
 
-  Future<List<Book>> searchUserBooks(String? phoneNumberQuery) async {
+  Future<void> addBook(Book book) async {
+    try {
+      final docRef =
+          FirebaseFirestore.instance.collection('books').doc(book.id);
+      await docRef.set(book.toMap());
+      // print("Book '${book.name}' added successfully!");
+    } on FirebaseException catch (e) {
+      // print("Error adding book: ${e.message}");
+      // Handle potential errors (e.g., network issues, duplicate IDs)
+    }
+  }
+
+  Future<void> deleteBook(String bookId) async {
+    try {
+      final docRef = bookCollection.doc(bookId);
+      await docRef.delete();
+      // print("Book with ID '$bookId' deleted successfully!");
+    } on FirebaseException catch (e) {
+      // print("Error deleting book: ${e.message}");
+      // Handle potential errors (e.g., network issues, non-existent document)
+    } catch (e) {
+      // print("Unexpected error: $e");
+    }
+  }
+
+  Future<List<Book>> getBooks() async {
+    final QuerySnapshot snapshot = await bookCollection.get();
+    return snapshot.docs
+        .map((doc) => Book.fromMap(doc.data() as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<List<Book>> searchUserBooks(String? uidquery) async {
     try {
       // Ensure phone number query is not null
-      if (phoneNumberQuery == null) {
-        throw ArgumentError('phoneNumberQuery must be non-null');
+      if (uidquery == null) {
+        throw ArgumentError('uid must be non-null');
       }
 
       // Firestore query based on phone number (assuming a field 'ownerPhoneNumber' exists)
-      final QuerySnapshot snapshot = await bookCollection
-          .where('usernumber', isEqualTo: phoneNumberQuery)
-          .get();
+      final QuerySnapshot snapshot =
+          await bookCollection.where('uid', isEqualTo: uidquery).get();
 
       if (snapshot.docs.isEmpty) {
-        print('No books found for the provided phone number.');
+        print('No books found for the provided uid.');
       }
 
       // Map each document to a Book object and return the list

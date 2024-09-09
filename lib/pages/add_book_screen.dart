@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:qitaby_web/book.dart';
 import 'package:qitaby_web/book_service.dart';
 import 'package:qitaby_web/auth_service.dart';
+import 'package:qitaby_web/customized_widgets/grade_input_field.dart';
 import 'package:qitaby_web/customized_widgets/pages_appbar.dart';
 import 'package:qitaby_web/language_provider.dart';
 
@@ -30,6 +31,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
   String? username;
   String? userNumber;
   String? userAddress;
+  String? uid;
+  String? utype;
 
   @override
   void initState() {
@@ -48,16 +51,16 @@ class _AddBookScreenState extends State<AddBookScreen> {
     final user = authService.currentUser;
 
     if (user != null) {
-      final userData = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
+      uid = user.uid;
+      final userData =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
       if (userData.exists) {
         setState(() {
           username = userData['username'];
           userNumber = userData['phone_number'];
           userAddress = userData['address'];
+          utype = userData['type'];
         });
       }
     }
@@ -99,8 +102,10 @@ class _AddBookScreenState extends State<AddBookScreen> {
       material: selectedMaterial!,
       username: username ?? 'Anonymous',
       usernumber: userNumber ?? 'Unknown',
+      usertype: utype ?? 'Unkown user type',
       publisher: _publisherController.text, // Include publisher
       yearOfPublication: year, // Include year of publication
+      userid: uid ?? 'Unknown uid',
     );
 
     try {
@@ -204,13 +209,9 @@ class _AddBookScreenState extends State<AddBookScreen> {
                 ),
               ),
               const SizedBox(height: 16.0),
-              TextField(
-                controller: _gradeController,
-                decoration: InputDecoration(
-                  labelText: currentLanguage == 'en' ? 'Class' : 'Classe',
-                  border: OutlineInputBorder(),
-                ),
-              ),
+              GradeInputField(
+                  currentLanguage: currentLanguage,
+                  gradeController: _gradeController),
               const SizedBox(height: 16.0),
               TextField(
                 controller: _addressController,
@@ -288,7 +289,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
               TextField(
                 controller: _publisherController,
                 decoration: InputDecoration(
-                  labelText: currentLanguage == 'en' ? 'Publisher' : 'Éditeur',
+                  labelText: currentLanguage == 'en' ? 'Publisher' : 'Edition',
                   border: const OutlineInputBorder(),
                 ),
               ),

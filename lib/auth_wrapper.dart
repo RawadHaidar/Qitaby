@@ -4,7 +4,6 @@ import "package:provider/provider.dart";
 import "package:qitaby_web/auth_service.dart";
 import "package:qitaby_web/pages/home_page.dart";
 import "package:qitaby_web/pages/login_screen.dart";
-import "package:qitaby_web/pages/search_book_screen.dart";
 
 class AuthWrapper extends StatelessWidget {
   @override

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:qitaby_web/customized_widgets/affordablebook_section.dart';
 import 'package:qitaby_web/customized_widgets/booklistings_section.dart';
 import 'package:qitaby_web/customized_widgets/buy_sell_books.dart';
+import 'package:qitaby_web/customized_widgets/contact_us_section.dart';
 import 'package:qitaby_web/customized_widgets/footer_section.dart';
 import 'package:qitaby_web/customized_widgets/manu_page.dart';
 import 'package:qitaby_web/customized_widgets/qitaby_introduction_section.dart';
@@ -73,7 +74,8 @@ class HomePage extends StatelessWidget {
                 TestimonialSection(),
                 AffordableBooksSection(),
                 BookListingsSection(),
-                FooterSection()
+                ContactUsSection(),
+                FooterSection(),
               ],
             ),
           ),

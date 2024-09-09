@@ -5,6 +5,7 @@ import 'package:qitaby_web/customized_widgets/language_switch.dart';
 import 'package:qitaby_web/language_provider.dart';
 import 'package:qitaby_web/pages/aboutus.dart';
 import 'package:qitaby_web/auth_service.dart';
+import 'package:qitaby_web/pages/contact_us_screen.dart';
 import 'package:qitaby_web/pages/home_page.dart';
 import 'package:qitaby_web/pages/search_book_screen.dart';
 import 'package:qitaby_web/pages/profile_screen.dart';
@@ -124,6 +125,16 @@ class MenuPage extends StatelessWidget {
                         }),
                         _buildMenuItem(context,
                             title: currentLanguage == 'en'
+                                ? 'Contact Us'
+                                : 'Contactez-nous', onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ContactUsPage()),
+                          );
+                        }),
+                        _buildMenuItem(context,
+                            title: currentLanguage == 'en'
                                 ? 'Logout'
                                 : 'Se déconnecter', onPressed: () async {
                           await authService.signOut();
@@ -164,6 +175,16 @@ class MenuPage extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => AboutUsPage()),
+                          );
+                        }),
+                        _buildMenuItem(context,
+                            title: currentLanguage == 'en'
+                                ? 'Contact Us'
+                                : 'Contactez-nous', onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ContactUsPage()),
                           );
                         }),
                         _buildMenuItem(context,

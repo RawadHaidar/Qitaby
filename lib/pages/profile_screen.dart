@@ -16,6 +16,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   List<Book> _books = [];
   String? phoneNumber;
+  String? uid;
 
   void _deleteBook(int index) {
     final bookId = _books[index].id;
@@ -59,9 +60,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Future<void> _searchBooks(String phoneNumberQuery) async {
+  Future<void> _searchBooks(String uidquery) async {
     final books = await Provider.of<BookService>(context, listen: false)
-        .searchUserBooks(phoneNumberQuery);
+        .searchUserBooks(uidquery);
     setState(() {
       _books = books;
     });
@@ -114,7 +115,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     } else if (snapshot.hasData) {
                       final userData = snapshot.data!;
 
-                      phoneNumber = userData['phone_number'];
+                      // phoneNumber = userData['phone_number'];
+                      uid = userData['uid'];
 
                       return Expanded(
                         // Wrap all content that should expand
@@ -125,7 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               height: 10,
                             ),
                             Text(
-                              'Profile',
+                              currentLanguage == 'en' ? 'Profile' : 'Profil',
                               textAlign: TextAlign.left,
                               style: GoogleFonts.alata(
                                 textStyle: const TextStyle(
@@ -189,8 +191,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               padding:
                                   const EdgeInsets.symmetric(vertical: 8.0),
                               child: ElevatedButton(
-                                onPressed: () =>
-                                    _searchBooks(phoneNumber.toString()),
+                                onPressed: () => _searchBooks(uid.toString()),
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 14.0, horizontal: 20.0),

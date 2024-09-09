@@ -1,12 +1,11 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:qitaby_web/customized_widgets/pages_appbar.dart';
 import 'package:qitaby_web/language_provider.dart';
-import 'package:qitaby_web/pages/aboutus.dart';
-import 'package:qitaby_web/auth_service.dart';
 import 'package:qitaby_web/pages/book_details_screen.dart';
-import 'package:qitaby_web/pages/profile_screen.dart';
+import 'package:qitaby_web/pages/contact_us_screen.dart';
 import 'package:qitaby_web/book_service.dart';
 import 'package:qitaby_web/book.dart';
 import 'package:qitaby_web/pages/add_book_screen.dart';
@@ -38,6 +37,7 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
         schoolGrades = grades;
       });
     });
+    _books.sort((a, b) => a.usertype == 'shop' ? -1 : 1);
   }
 
   Future<void> _searchBooks(
@@ -116,7 +116,7 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
                 decoration: InputDecoration(
                   labelText: currentLanguage == 'en'
                       ? 'Select Material'
-                      : 'Sélectionner le matériau',
+                      : 'Sélectionner la matiére',
                   border: const OutlineInputBorder(),
                 ),
               );
@@ -170,40 +170,91 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
                   decoration: InputDecoration(
                     labelText: currentLanguage == 'en'
                         ? 'Select School Name'
-                        : "Sélectionnez le nom de l'école",
+                        : "Sélectionner le nom de l'école",
                   ),
                 );
               },
               displayStringForOption: (String option) => option,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: DropdownButton<String>(
-              value: selectedGrade,
-              hint: Text(currentLanguage == 'en'
-                  ? 'Select Grade'
-                  : 'Sélectionnez le niveau'),
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedGrade = newValue;
-                });
-              },
-              items: [
-                const DropdownMenuItem<String>(
-                  value: null,
-                  child: Text('None'), // Display text for null value
-                ),
-                ...List.generate(12, (index) {
-                  String grade = (index + 1).toString();
-                  return DropdownMenuItem<String>(
-                    value: grade,
-                    child: Text(grade),
-                  );
-                })
-              ],
-              borderRadius: BorderRadius.circular(12.0),
+          Center(
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  const TextSpan(
+                    text: 'Your school is not listed? ',
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                  TextSpan(
+                    text: 'Contact us now',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ContactUsPage()),
+                        );
+                        // Replace with your contact page route
+                      },
+                  ),
+                ],
+              ),
             ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(currentLanguage == 'en'
+                  ? 'Select Class'
+                  : 'Sélectionner une classe'),
+              Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButton<String>(
+                    value: selectedGrade,
+                    hint: Text(currentLanguage == 'en'
+                        ? 'Select Class'
+                        : 'Sélectionner une classe'),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedGrade = newValue;
+                      });
+                    },
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: null,
+                        child: Text('None'), // Display text for null value
+                      ),
+                      ...[
+                        'KG1 / PS',
+                        'KG2 / MS',
+                        'KG3 / GS',
+                        'Grade 1 / EB1',
+                        'Grade 2 / EB2',
+                        'Grade 3 / EB3',
+                        'Grade 4 / EB4',
+                        'Grade 5 / EB5',
+                        'Grade 6 / EB6',
+                        'Grade 7 / EB7',
+                        'Grade 8 / EB8',
+                        'Grade 9 / EB9',
+                        'Grade 10 / Seconde',
+                        'Grade 11 / Première',
+                        'Grade 12 / Terminale'
+                      ].map((grade) => DropdownMenuItem<String>(
+                            value: grade,
+                            child: Text(grade),
+                          )),
+                    ],
+                    borderRadius: BorderRadius.circular(12.0),
+                  )),
+            ],
           ),
           IconButton(
             icon: const Icon(Icons.search),
@@ -216,6 +267,12 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
             child: ListView.builder(
               itemCount: _books.length,
               itemBuilder: (context, index) {
+                // Sort books so 'shop' usertype books come first
+                _books = _books
+                    .where((book) => book.usertype == 'shop')
+                    .followedBy(_books.where((book) => book.usertype != 'shop'))
+                    .toList();
+
                 final book = _books[index];
                 return Card(
                   shape: RoundedRectangleBorder(
@@ -247,11 +304,39 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
                         ),
                       ),
                       subtitle: Text(book.schoolName),
-                      trailing: Text(
-                        '${book.price.toString()} USD',
-                        style: TextStyle(
-                          color: Colors.green[800], // Match the theme
-                        ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize
+                            .min, // To make the row as small as possible
+
+                        children: [
+                          // Display "New Book" if the book is from a shop
+                          if (book.usertype == 'shop')
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                  left:
+                                      8.0), // Add some space between price and label
+                              child: Text(
+                                'New',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  // You can adjust the color as per design
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 25,
+                                ),
+                              ),
+                            ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          // Display price
+                          Text(
+                            '${book.price.toString()} USD',
+                            style: TextStyle(
+                              color: Colors.green[800], // Match the theme
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

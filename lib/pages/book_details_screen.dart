@@ -53,7 +53,7 @@ class BookDetailsScreen extends StatelessWidget {
             Text(
               currentLanguage == 'en'
                   ? 'Material: ${book.material}'
-                  : 'Matériel: ${book.material}',
+                  : 'Matiére: ${book.material}',
               style: const TextStyle(fontSize: 18.0),
             ),
             const SizedBox(height: 8.0),
@@ -76,7 +76,7 @@ class BookDetailsScreen extends StatelessWidget {
             Text(
               currentLanguage == 'en'
                   ? 'Publisher: ${book.publisher}'
-                  : 'Éditeur: ${book.publisher}',
+                  : 'Edition: ${book.publisher}',
               style: const TextStyle(fontSize: 18.0),
             ),
             const SizedBox(height: 8.0),

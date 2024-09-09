@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qitaby_web/auth_wrapper.dart';
+import 'package:qitaby_web/auth_wrapper_toshop.dart';
 import 'package:qitaby_web/language_provider.dart';
 
 class FooterSection extends StatelessWidget {
@@ -58,7 +59,7 @@ class FooterSection extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => AuthWrapper()),
+                                    builder: (context) => AuthWrapperToshop()),
                               );
                             }, // Add navigation logic
                             child: Text(
@@ -70,22 +71,22 @@ class FooterSection extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 16.0),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => AuthWrapper()),
-                              );
-                            }, // Add navigation logic
-                            child: const Text(
-                              'Log In or Sign Up',
-                              style: TextStyle(
-                                color: Colors.white,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ),
+                          // TextButton(
+                          //   onPressed: () {
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //           builder: (context) => AuthWrapper()),
+                          //     );
+                          //   }, // Add navigation logic
+                          //   child: const Text(
+                          //     'Log In or Sign Up',
+                          //     style: TextStyle(
+                          //       color: Colors.white,
+                          //       decoration: TextDecoration.underline,
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ],
