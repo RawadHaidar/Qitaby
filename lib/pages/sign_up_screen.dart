@@ -41,8 +41,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               children: <TextSpan>[
                 TextSpan(
                   text: currentLanguage == 'en'
-                      ? 'Welcome to our platform for buying and selling school books in Beirut, Lebanon. \n\n'
-                      : "Bienvenue sur notre plateforme d'achat et de vente de livres scolaires à Beyrouth, au Liban. \n\n",
+                      ? 'Welcome to our platform for buying and selling school books in Lebanon. \n\n'
+                      : "Bienvenue sur notre plateforme d'achat et de vente de livres scolaires à Liban. \n\n",
                   style: const TextStyle(fontWeight: FontWeight.normal),
                 ),
                 TextSpan(

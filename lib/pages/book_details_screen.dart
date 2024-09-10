@@ -58,9 +58,7 @@ class BookDetailsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8.0),
             Text(
-              currentLanguage == 'en'
-                  ? 'Class: ${book.grade}'
-                  : 'Classe: ${book.grade}',
+              'Class: ${book.grade}',
               style: const TextStyle(fontSize: 18.0),
             ),
             const SizedBox(height: 8.0),
@@ -110,14 +108,21 @@ class BookDetailsScreen extends StatelessWidget {
               style: const TextStyle(fontSize: 18.0),
             ),
             const Spacer(),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context); // Navigate back to the previous screen
-              },
-              child: Text(
-                currentLanguage == 'en' ? 'Back' : 'Retour',
-              ),
+            Text(
+              currentLanguage == 'en'
+                  ? 'Disclaimer: This platform is not responsible for any defects, wear, or damage to the books listed for sale. Buyers are encouraged to carefully review the condition of the book before completing a purchase. All transactions are solely between the buyer and seller.'
+                  : "Avis de non-responsabilité : Cette plateforme n’est pas responsable des défauts, de l’usure ou des dommages causés aux livres mis en vente. Les acheteurs sont encouragés à examiner attentivement l’état du livre avant de finaliser un achat. Toutes les transactions se font uniquement entre l’acheteur et le vendeur.",
+              style: const TextStyle(fontSize: 14.0),
             ),
+
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.pop(context); // Navigate back to the previous screen
+            //   },
+            //   child: Text(
+            //     currentLanguage == 'en' ? 'Back' : 'Retour',
+            //   ),
+            // ),
           ],
         ),
       ),
