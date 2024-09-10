@@ -81,18 +81,20 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
                 return const Iterable<String>.empty();
               }
               return [
-                currentLanguage == 'en' ? 'Mathematics' : 'Mathématiques',
-                currentLanguage == 'en' ? 'Physics' : 'Physique',
-                currentLanguage == 'en' ? 'Science' : 'Science',
-                currentLanguage == 'en' ? 'Chemistry' : 'Chimie',
+                'Mathematics / Mathématiques',
+                'Physics / Physique',
+                'Science / Science',
+                'Chemistry / Chimie',
                 'French (language)',
                 'English (language)',
-                'اللغة العربية',
+                'اللغة العربية / Arabic',
                 'التربية الوطنية والتنشئة المدنية',
-                'التاريخ',
-                'الجغرافيا',
-                'الفلسفة',
-                currentLanguage == 'en' ? 'Other' : 'Autre',
+                'التاريخ / History',
+                'الجغرافيا / Geography',
+                'الفلسفة / philosophy',
+                'Music / موسيقى',
+                'Religion /دين ',
+                'Other / Autre',
                 currentLanguage == 'en' ? 'All' : 'Tout',
               ].where((String option) {
                 return option

@@ -161,17 +161,19 @@ class _AddBookScreenState extends State<AddBookScreen> {
                     return const Iterable<String>.empty();
                   }
                   return [
-                    currentLanguage == 'en' ? 'Mathematics' : 'Mathématiques',
-                    currentLanguage == 'en' ? 'Physics' : 'Physique',
-                    currentLanguage == 'en' ? 'Science' : 'Science',
-                    currentLanguage == 'en' ? 'Chemistry' : 'Chimie',
+                    'Mathematics / Mathématiques',
+                    'Physics / Physique',
+                    'Science / Science',
+                    'Chemistry / Chimie',
                     'French (language)',
                     'English (language)',
-                    'اللغة العربية',
+                    'اللغة العربية / Arabic',
                     'التربية الوطنية والتنشئة المدنية',
-                    'التاريخ',
-                    'الجغرافيا',
-                    'الفلسفة',
+                    'التاريخ / History',
+                    'الجغرافيا / Geography',
+                    'الفلسفة / philosophy',
+                    'Music / موسيقى',
+                    'Religion /دين ',
                     currentLanguage == 'en' ? 'Other' : 'Autre'
                   ].where((String option) {
                     return option
