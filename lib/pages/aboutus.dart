@@ -29,7 +29,7 @@ class AboutUsPage extends StatelessWidget {
               SizedBox(height: 16.0),
               Text(
                 currentLanguage == 'en'
-                    ? 'Your one-stop platform for buying and selling school books in Lebanon, Lebanon. '
+                    ? 'Your one-stop platform for buying and selling school books in Lebanon. '
                         'We understand the challenges that students and parents face when it comes to finding '
                         'affordable and accessible educational resources. That\'s why we created this platform—to make '
                         'the process of obtaining school books easier, more affordable, and more sustainable.'
