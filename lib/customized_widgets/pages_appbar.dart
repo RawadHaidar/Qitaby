@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:qitaby_web/customized_widgets/manu_page.dart';
+import 'package:qitaby_web/pages/manu_page.dart';
 
 enum AppBarThemeType {
   dark,

@@ -5,7 +5,7 @@ import 'package:qitaby_web/customized_widgets/booklistings_section.dart';
 import 'package:qitaby_web/customized_widgets/buy_sell_books.dart';
 import 'package:qitaby_web/customized_widgets/contact_us_section.dart';
 import 'package:qitaby_web/customized_widgets/footer_section.dart';
-import 'package:qitaby_web/customized_widgets/manu_page.dart';
+import 'package:qitaby_web/pages/manu_page.dart';
 import 'package:qitaby_web/customized_widgets/qitaby_introduction_section.dart';
 import 'package:qitaby_web/customized_widgets/recycle_book_section.dart';
 import 'package:qitaby_web/customized_widgets/services_section.dart';
