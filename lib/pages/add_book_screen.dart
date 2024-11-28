@@ -174,7 +174,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                     'الفلسفة / philosophy',
                     'Music / موسيقى',
                     'Religion /دين ',
-                    currentLanguage == 'en' ? 'Other' : 'Autre'
+                    'Other / Autre'
                   ].where((String option) {
                     return option
                         .toLowerCase()

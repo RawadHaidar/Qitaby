@@ -104,34 +104,41 @@ class _AdminBookPageState extends State<AdminBookPage> {
           // Filter section
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Row(
+            child: Column(
               children: [
-                Expanded(
-                  child: DropdownButton<String>(
-                    hint: Text('Select Filter'),
-                    value: _selectedFilter,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedFilter = newValue;
-                      });
-                    },
-                    items: filterOptions.map((String option) {
-                      return DropdownMenuItem<String>(
-                        value: option,
-                        child: Text(option),
-                      );
-                    }).toList(),
-                  ),
-                ),
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Filter Value',
+                Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButton<String>(
+                        hint: Text('Select Filter'),
+                        value: _selectedFilter,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedFilter = newValue;
+                          });
+                        },
+                        items: filterOptions.map((String option) {
+                          return DropdownMenuItem<String>(
+                            value: option,
+                            child: Text(option),
+                          );
+                        }).toList(),
+                      ),
                     ),
-                    onChanged: (value) {
-                      _filterValue = value;
-                    },
-                  ),
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Filter Value',
+                        ),
+                        onChanged: (value) {
+                          _filterValue = value;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
                 ),
                 ElevatedButton(
                   onPressed: _getBooks,
